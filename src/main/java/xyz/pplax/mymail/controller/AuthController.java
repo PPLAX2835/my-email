@@ -86,13 +86,21 @@ public class AuthController {
 
     /**
      * 登出
-     * @param token
      * @return
      */
     @DeleteMapping("/logout")
-    public String logout(@RequestParam("token") String token) {
-        System.out.println(token);
-        return "";
+    public String logout(HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+
+        try {
+            // 从token中取出user，将缓存中的移除
+            User user = userService.selectByToken(token);
+            redisOperator.del(user.getUsername());
+            return JSON.toJSONString(ResponseResult.success());
+        } catch (Exception e) {
+            return JSON.toJSONString(ResponseResult.error(e.getMessage()));
+        }
+
     }
 
 

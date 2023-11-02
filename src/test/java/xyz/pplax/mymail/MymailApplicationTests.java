@@ -37,7 +37,7 @@ class MymailApplicationTests {
         Email email = new Email();
         email.setEmailAddress("1458667357@qq.com");
         email.setUid(7312L);
-        List<Email> emails = emailMapper.selectSelective(email);
+        List<Email> emails = emailMapper.selectListSelective(email);
         if (emails.size() == 0) {
             throw new RuntimeException("找不到邮箱，可能是参数错误");
         }
@@ -64,7 +64,7 @@ class MymailApplicationTests {
     @Test
     public void MapperTest() {
         User user = new User();
-        user.setUid(7312L);
+        user.setUid(1L);
         user.setUsername("PPLAX");
         user.setPassword("123456");
         user.setCreateTime(new Date());
@@ -74,7 +74,7 @@ class MymailApplicationTests {
         email.setEmailAddress("1458667357@qq.com");
         email.setEmailPassword("dvbviwakqsrvbadb");
         email.setHost("smtp.qq.com");
-        email.setUid(7312L);
+        email.setUid(1L);
         email.setPort(587);
         email.setCreateTime(new Date());
 

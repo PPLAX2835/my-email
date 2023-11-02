@@ -15,7 +15,7 @@ public interface EmailMapper {
 
     Email selectByPrimaryKey(Long emailId);
 
-    List<Email> selectSelective(Email record);
+    List<Email> selectListSelective(Email record);
 
     int updateByPrimaryKeySelective(Email record);
 

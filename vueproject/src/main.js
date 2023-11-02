@@ -28,6 +28,10 @@ Vue.use(ElementUI);
 // 使用VueQuillEditor
 Vue.use(VueQuillEditor);
 
+// 全局变量
+import globle from './components/globle';
+Vue.prototype.$globle=globle;
+
 // 过滤器
 import * as custom from './utils/util'
 
@@ -37,11 +41,6 @@ Object.keys(custom).forEach(key => {
 
 // 路由拦截器
 router.beforeEach((to, from, next) => {
-    
-    // localStorage.removeItem("userInfo")
-
-
-
     if (to.matched.length != 0) {
         if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
             if (Boolean(localStorage.getItem("userInfo"))) { // 通过vuex state获取当前的user是否存在

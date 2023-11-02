@@ -19,13 +19,13 @@
     from email
     where email_id = #{emailId,jdbcType=BIGINT}
   </select>
-  <select id="selectSelective" parameterType="xyz.pplax.mymail.model.entity.Email" resultMap="BaseResultMap">
+  <select id="selectListSelective" parameterType="xyz.pplax.mymail.model.entity.Email" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from email
     where
     <if test="uid != null">
-      `uid` = #{uid} and
+    `uid` = #{uid} and
     </if>
     <if test="emailAddress != null">
       email_address = #{emailAddress} and

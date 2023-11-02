@@ -5,9 +5,13 @@ import { loginreq, req } from './axiosFun';
 export const login = (params) => { return loginreq("post", "/api/auth/login", params) };
 // 退出接口
 // export const logout = ()
-export const loginout = () => { return axios.delete("/api/auth/logout?&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
+export const loginout = () =>  { return req("delete", "/api/auth/logout", {}).then(res => res.data) };
 // 获取用户菜单
 export const menu = (params) => { return req("get", "/api/menus", {}).then(res => res.data) };
+
+
+// 用户管理-获取单个用户
+export const getSelf = () => { return req("get", "/api/user/self", {}).then(res => res.data) };
 
 /**
  * 用户管理
@@ -16,8 +20,8 @@ export const menu = (params) => { return req("get", "/api/menus", {}).then(res =
 export const userList = (params) => { return req("post", "/api/User/list", params) };
 // 用户管理-获取单个用户
 export const getUser = (params) => { return axios.get("/api/User/getuser?uid=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
-// 用户管理-获取单个用户
-export const getSelf = () => { return axios.get("/api/User/getSelf?token=" + localStorage.getItem('logintoken')).then(res => res.data) };
+// // 用户管理-获取单个用 = 户
+// export const getSelf() => { return axios.get("/api/User/getSelf?token=" + localStorage.getItem('logintoken')).then(res => res.data) };
 // 用户管理-保存（添加编辑）
 export const userSave = (params) => { return req("post", "/api/User/save", params) };
 // 用户管理-删除用户

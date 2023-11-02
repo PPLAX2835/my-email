@@ -2,6 +2,11 @@ import axios from 'axios';
 import { req } from './axiosFun';
 
 
+// 获得用户的邮箱们
+export const EmailList = (params) => { return req("get", "/api/email/emails", {}).then(res => res.data) };
+
+
+
 /**
  * 文章管理
  */

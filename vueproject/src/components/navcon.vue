@@ -9,7 +9,11 @@
       </el-button>
       <el-submenu index="2" class="submenu">
         <template slot="title">{{user.name}}</template>
-        <el-menu-item @click="exit()" index="2-3">退出</el-menu-item>
+
+        <el-menu-item v-for="(email, index) in emails" @click="switchEmailIndex(index)">{{ email.emailAddress }}</el-menu-item>
+
+        <el-menu-item @click="exit()" index="2-3">添加邮箱</el-menu-item>
+        <el-menu-item @click="exit()" index="2-3">退出账号</el-menu-item>
       </el-submenu>
     </el-menu>
 
@@ -21,6 +25,8 @@ import {
   getSelf,
   userSave
 } from '../api/userMG'
+import { EmailList } from '../api/basisMG'
+
 export default {
   name: 'navcon',
   data() {
@@ -43,6 +49,7 @@ export default {
       imgshow: require('../assets/img/show.png'),
       imgsq: require('../assets/img/sq.png'),
       user: {},
+      emails: [],
       // rules表单验证
       rules: {
         username: [
@@ -66,7 +73,10 @@ export default {
         .then(() => {
           loginout()
             .then(res => {
-              if (res.success) {
+              if (res.code == 200) {
+                localStorage.removeItem("userInfo");
+                localStorage.removeItem("logintoken");
+
                 //如果请求成功就让他2秒跳转路由
                 setTimeout(() => {
                   this.$store.commit('logout', 'false')
@@ -77,7 +87,7 @@ export default {
                   })
                 }, 1000)
               } else {
-                this.$message.error(res.msg)
+                this.$message.error(res.message)
                 this.logining = false
                 return false
               }
@@ -96,8 +106,24 @@ export default {
           })
         })
     },
-    // 获取个人数据
+    // 获取数据
     getData() {
+
+      /**
+       * 获取用户邮箱
+       */
+      EmailList().then(res => {
+        if (res.code == 200) {
+          // 放到全局变量
+          this.$globle.setEmails(res.data)
+          // 保存到当前变量
+          this.emails = res.data
+        } else {
+          this.user = res.data
+        }
+      })
+
+
       getSelf().then(res => {
         this.loading = false
         if (res.success == false) {
@@ -118,6 +144,12 @@ export default {
           this.user = res.data
         }
       })
+    },
+    /**
+     * 记录当前正在使用的邮箱的下标
+     */
+    switchEmailIndex(index) {
+        this.$globle.setCurrentEmailIndex(index)
     },
     // 个人中心展示
     content() {

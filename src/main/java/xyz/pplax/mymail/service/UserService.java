@@ -1,11 +1,13 @@
 package xyz.pplax.mymail.service;
 
+import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.pplax.mymail.mapper.UserMapper;
 import xyz.pplax.mymail.model.entity.User;
+import xyz.pplax.mymail.utils.RedisOperator;
 import xyz.pplax.mymail.utils.TokenUtils;
 
 @Service
@@ -13,6 +15,8 @@ public class UserService {
 
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    private RedisOperator redisOperator;
 
     public int deleteByPrimaryKey(Long uid) {
         return userMapper.deleteByPrimaryKey(uid);
@@ -47,12 +51,18 @@ public class UserService {
             Claims claims = e.getClaims();
             username = claims.getSubject();
             password = (String) claims.get("password");
-            User user = userMapper.selectByUsernameAndPassword(username, password);
-            if (user != null) {
-                return null;
-            }
+
+            // 从缓存中移除
+            redisOperator.del(username);
         }
-        return userMapper.selectByUsernameAndPassword(username, password);
+
+        // 先从缓存中查询，如果查询不到就从数据库中查
+        String userJsonStr = redisOperator.get(username);
+        if (!userJsonStr.isEmpty()) {
+            return JSON.parseObject(userJsonStr, User.class);
+        } else {
+            return userMapper.selectByUsernameAndPassword(username, password);
+        }
     }
 
     public int updateByPrimaryKeySelective(User record) {
