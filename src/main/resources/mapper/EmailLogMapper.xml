@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.pplax.mymail.mapper.EmailLogMapper">
+  <resultMap id="BaseResultMap" type="xyz.pplax.mymail.model.entity.EmailLog">
+    <id column="log_id" jdbcType="BIGINT" property="logId" />
+    <result column="uid" jdbcType="BIGINT" property="uid" />
+    <result column="type" jdbcType="OTHER" property="type" />
+    <result column="sender_email" jdbcType="VARCHAR" property="senderEmail" />
+    <result column="receiver_email" jdbcType="VARCHAR" property="receiverEmail" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    log_id, `uid`, `type`, sender_email, receiver_email, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from email_log
+    where log_id = #{logId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from email_log
+    where log_id = #{logId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="log_id" keyProperty="logId" parameterType="xyz.pplax.mymail.model.entity.EmailLog" useGeneratedKeys="true">
+    insert into email_log (`uid`, `type`, sender_email, 
+      receiver_email, create_time)
+    values (#{uid,jdbcType=BIGINT}, #{type,jdbcType=OTHER}, #{senderEmail,jdbcType=VARCHAR}, 
+      #{receiverEmail,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="log_id" keyProperty="logId" parameterType="xyz.pplax.mymail.model.entity.EmailLog" useGeneratedKeys="true">
+    insert into email_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        `uid`,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="senderEmail != null">
+        sender_email,
+      </if>
+      <if test="receiverEmail != null">
+        receiver_email,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=OTHER},
+      </if>
+      <if test="senderEmail != null">
+        #{senderEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverEmail != null">
+        #{receiverEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="xyz.pplax.mymail.model.entity.EmailLog">
+    update email_log
+    <set>
+      <if test="uid != null">
+        `uid` = #{uid,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=OTHER},
+      </if>
+      <if test="senderEmail != null">
+        sender_email = #{senderEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverEmail != null">
+        receiver_email = #{receiverEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where log_id = #{logId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="xyz.pplax.mymail.model.entity.EmailLog">
+    update email_log
+    set `uid` = #{uid,jdbcType=BIGINT},
+      `type` = #{type,jdbcType=OTHER},
+      sender_email = #{senderEmail,jdbcType=VARCHAR},
+      receiver_email = #{receiverEmail,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where log_id = #{logId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,45 +1,46 @@
 package xyz.pplax.mymail.controller;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.pplax.mymail.model.dto.MessageDto;
+import xyz.pplax.mymail.model.resp.ResponseResult;
 import xyz.pplax.mymail.service.MailService;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/ap/messages")
 public class MailController {
 
     @Autowired
     MailService mailService;
 
-    @PostMapping(value = "/send")
-    public void sendTextMail(
-            MessageDto messageDto) throws IOException {
-
-        String recipientEmail = messageDto.getRecipientEmail();
-
-        String subject = messageDto.getSubject();
-
-        String content = messageDto.getContent();
-
-        MultipartFile attachment = messageDto.getAttachment();
-
-        System.out.println(attachment);
-
-        if (attachment != null) {
-            byte[] attachmentBytes = attachment.getBytes();
-            mailService.sendMailMessage(recipientEmail, subject, content, attachmentBytes, attachment.getOriginalFilename());
-        } else {
-            mailService.sendMailMessage(recipientEmail, subject, content, null, null);
-        }
-    }
+//    @PostMapping(value = "/send")
+//    public String sendTextMail(MessageDto messageDto){
+//        String senderEmail = messageDto.getSenderEmail();
+//
+//        String recipientEmail = messageDto.getRecipientEmail();
+//
+//        String subject = messageDto.getSubject();
+//
+//        String content = messageDto.getContent();
+//
+//        MultipartFile attachment = messageDto.getAttachment();
+//
+//        try {
+//            if (attachment != null) {
+//                byte[] attachmentBytes = attachment.getBytes();
+//                mailService.sendMailMessage(senderEmail, recipientEmail, subject, content, attachmentBytes, attachment.getOriginalFilename());
+//            } else {
+//                mailService.sendMailMessage(senderEmail, recipientEmail, subject, content, null, null);
+//            }
+//            return JSON.toJSONString(ResponseResult.success());
+//        } catch (IOException e) {
+//            return JSON.toJSONString(ResponseResult.error(e.getMessage()));
+//        }
+//    }
 
 
     /**

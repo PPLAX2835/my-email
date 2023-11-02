@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class MessageDto {
 
+    private String senderEmail;
+
     private String recipientEmail;
 
     private String subject;

@@ -9,12 +9,13 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import xyz.pplax.mymail.mapper.EmailMapper;
+import xyz.pplax.mymail.model.entity.Email;
 
-import javax.activation.DataSource;
 import javax.mail.MessagingException;
-import java.io.InputStream;
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * 邮件业务类
@@ -24,14 +25,9 @@ import java.util.Objects;
 public class MailService {
     private static final Logger logger = LoggerFactory.getLogger(MailService.class);
 
-    /**
-     * 注入邮件工具类
-     */
     @Autowired
-    private JavaMailSenderImpl javaMailSender;
+    private EmailMapper emailMapper;
 
-    @Value("${spring.mail.username}")
-    private String sendMailer;
 
     /**
      * 检测邮件信息类
@@ -53,14 +49,34 @@ public class MailService {
 
     /**
      * 发送邮件
+     * @param to
+     * @param subject
+     * @param text
+     * @param attachment
+     * @param attachmentFileName
      */
-    public void sendMailMessage(String to, String subject, String text, byte[] attachment, String attachmentFileName){
+    public void sendMailMessage(Email email, String to, String subject, String text, byte[] attachment, String attachmentFileName){
 
         try {
+
+            JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+            javaMailSender.setHost(email.getHost());
+            javaMailSender.setPort(email.getPort());
+            javaMailSender.setUsername(email.getEmailAddress());
+            javaMailSender.setPassword(email.getEmailPassword());
+            javaMailSender.setDefaultEncoding("UTF-8");
+            Properties properties = new Properties();
+            properties.setProperty("mail.smtp.auth", "true");
+            javaMailSender.setJavaMailProperties(properties);
+
+
+            /**
+             * 建立邮件
+             */
             //true 代表支持复杂的类型
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(javaMailSender.createMimeMessage(),true);
             //邮件发信人
-            mimeMessageHelper.setFrom(sendMailer);
+            mimeMessageHelper.setFrom(email.getEmailAddress());
             //邮件收信人  1或多个
             mimeMessageHelper.setTo(to.split(","));
             //邮件主题
@@ -77,7 +93,7 @@ public class MailService {
 
             //发送邮件
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
-            System.out.println("发送邮件成功："+sendMailer+"->"+to);
+            System.out.println("发送邮件成功："+email.getEmailAddress()+"->"+to);
 
         } catch (MessagingException e) {
             e.printStackTrace();

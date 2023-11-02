@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.pplax.mymail.mapper.EmailMapper">
+  <resultMap id="BaseResultMap" type="xyz.pplax.mymail.model.entity.Email">
+    <id column="email_id" jdbcType="BIGINT" property="emailId" />
+    <result column="uid" jdbcType="BIGINT" property="uid" />
+    <result column="email_address" jdbcType="VARCHAR" property="emailAddress" />
+    <result column="email_password" jdbcType="VARCHAR" property="emailPassword" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
+    <result column="port" jdbcType="INTEGER" property="port" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    email_id, `uid`, email_address, email_password, `host`, port, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from email
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </select>
+  <select id="selectSelective" parameterType="xyz.pplax.mymail.model.entity.Email" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from email
+    where
+    <if test="uid != null">
+      `uid` = #{uid} and
+    </if>
+    <if test="emailAddress != null">
+      email_address = #{emailAddress} and
+    </if>
+    <if test="emailPassword != null">
+      email_password = #{emailPassword} and
+    </if>
+    <if test="host != null">
+      `host` = #{host} and
+    </if>
+    <if test="port != null">
+      port = #{port} and
+    </if>
+    <if test="createTime != null">
+      create_time = #{createTime} and
+    </if>
+    1 = 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from email
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="email_id" keyProperty="emailId" parameterType="xyz.pplax.mymail.model.entity.Email" useGeneratedKeys="true">
+    insert into email (`uid`, email_address, email_password, 
+      `host`, port, create_time
+      )
+    values (#{uid,jdbcType=BIGINT}, #{emailAddress,jdbcType=VARCHAR}, #{emailPassword,jdbcType=VARCHAR}, 
+      #{host,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="email_id" keyProperty="emailId" parameterType="xyz.pplax.mymail.model.entity.Email" useGeneratedKeys="true">
+    insert into email
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        `uid`,
+      </if>
+      <if test="emailAddress != null">
+        email_address,
+      </if>
+      <if test="emailPassword != null">
+        email_password,
+      </if>
+      <if test="host != null">
+        `host`,
+      </if>
+      <if test="port != null">
+        port,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=BIGINT},
+      </if>
+      <if test="emailAddress != null">
+        #{emailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="emailPassword != null">
+        #{emailPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null">
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null">
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="xyz.pplax.mymail.model.entity.Email">
+    update email
+    <set>
+      <if test="uid != null">
+        `uid` = #{uid,jdbcType=BIGINT},
+      </if>
+      <if test="emailAddress != null">
+        email_address = #{emailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="emailPassword != null">
+        email_password = #{emailPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null">
+        `host` = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null">
+        port = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="xyz.pplax.mymail.model.entity.Email">
+    update email
+    set `uid` = #{uid,jdbcType=BIGINT},
+      email_address = #{emailAddress,jdbcType=VARCHAR},
+      email_password = #{emailPassword,jdbcType=VARCHAR},
+      `host` = #{host,jdbcType=VARCHAR},
+      port = #{port,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </update>
+</mapper>
