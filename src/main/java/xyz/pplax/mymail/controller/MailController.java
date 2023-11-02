@@ -11,7 +11,7 @@ import xyz.pplax.mymail.service.MailService;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/ap/messages")
+@RequestMapping("/api/messages")
 public class MailController {
 
     @Autowired
