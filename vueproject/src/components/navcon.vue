@@ -9,75 +9,9 @@
       </el-button>
       <el-submenu index="2" class="submenu">
         <template slot="title">{{user.name}}</template>
-        <el-menu-item index="2-1">设置</el-menu-item>
-        <el-menu-item @click="content()" index="2-2">个人中心</el-menu-item>
         <el-menu-item @click="exit()" index="2-3">退出</el-menu-item>
       </el-submenu>
     </el-menu>
-    <!-- 个人中心展示 -->
-    <el-dialog :title="user.name" :visible.sync="contentShow" width="30%" @click='closeDialog()'>
-      <template>
-        <div>
-          <el-form>
-            <el-form-item label="uid">
-              <span>{{ user.uid }}</span>
-            </el-form-item>
-            <el-form-item label="地址">
-              <span>{{ user.address }}</span>
-            </el-form-item>
-            <el-form-item label="Email">
-              <span>{{ user.email }}</span>
-            </el-form-item>
-            <el-form-item label="性别">
-              <span>{{ formatGender(user.gender) }}</span>
-            </el-form-item>
-            <el-form-item label="电话">
-              <span>{{ user.phone }}</span>
-            </el-form-item>
-            <el-form-item label="最喜欢的音乐人">
-              <span>{{ user.favouriteMusician }}</span>
-            </el-form-item>
-          </el-form>
-        </div>
-      </template>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click='closeDialog()'>关闭</el-button>
-        <el-button size="small" type="primary" :loading="loading" class="title" @click="contentEditOpen">编辑</el-button>
-      </div>
-    </el-dialog>
-    <!-- 个人中心编辑 -->
-    <el-dialog title="编辑" :visible.sync="contentEditShow" width="30%" @click='closeDialog()'>
-      <div>
-        <el-form label-width="80px" ref="editForm" :model="editForm" :rules="rules">
-          <el-form-item label="用户名" prop="username">
-            <el-input size="small" v-model="editForm.username" auto-complete="off" placeholder="请输入用户名"></el-input>
-          </el-form-item>
-          <el-form-item label="昵称" prop="name">
-            <el-input size="small" v-model="editForm.name" auto-complete="off" placeholder="请输入昵称"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号" prop="phone">
-            <el-input size="small" v-model="editForm.phone" placeholder="请输入手机号"></el-input>
-          </el-form-item>
-          <el-form-item label="邮件" prop="email">
-            <el-input size="small" v-model="editForm.email" placeholder="请输入邮箱地址"></el-input>
-          </el-form-item>
-          <el-form-item label="性别" prop="gender">
-            <el-radio v-model="editForm.gender" :label="1" :checked="editForm.gender === 1">男</el-radio>
-            <el-radio v-model="editForm.gender" :label="0" :checked="editForm.gender === 0">女</el-radio>
-          </el-form-item>
-          <el-form-item label="地址" prop="address">
-            <el-input size="small" v-model="editForm.address" placeholder="请输入地址"></el-input>
-          </el-form-item>
-          <el-form-item label="音乐" prop="favouriteMusician">
-            <el-input size="small" v-model="editForm.favouriteMusician" placeholder="请输入最喜欢的音乐人"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click='closeDialog()'>取消</el-button>
-        <el-button size="small" type="primary" :loading="loading" class="title" @click="selfContentSave">保存</el-button>
-      </div>
-    </el-dialog>
 
   </div>
 </template>
@@ -91,8 +25,6 @@ export default {
   name: 'navcon',
   data() {
     return {
-      contentShow: false,
-      contentEditShow: false,
       collapsed: true,
       // 编辑
       editForm: {
@@ -115,19 +47,6 @@ export default {
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
-        ],
-        name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' }
-        ],
-        rid: [{ required: true, message: '请选择角色', trigger: 'blur' }],
-        phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          {
-            pattern: /^1(3\d|47|5((?!4)\d)|7(0|1|[6-8])|8\d)\d{8,8}$/,
-            required: true,
-            message: '请输入正确的手机号',
-            trigger: 'blur'
-          }
         ]
       }
     }

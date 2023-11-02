@@ -32,67 +32,10 @@ export default {
   },
   // 创建完毕状态(里面是操作)
   created() {
-    // 获取图形验证码
-    // let res = {
-    //   success: true,
-    //   data: [
-    //     {
-    //       menuid: 1,
-    //       icon: 'el-icon-eleme',
-    //       menuname: '基础管理',
-    //       hasThird: null,
-    //       url: null,
-    //       menus: [
-    //         {
-    //           menuid: 1,
-    //           icon: 'el-icon-document-copy',
-    //           menuname: '文章管理',
-    //           hasThird: 'N',
-    //           url: 'article/Article',
-    //           menus: null
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       menuid: 71,
-    //       icon: 'el-icon-setting',
-    //       menuname: '系统管理',
-    //       hasThird: null,
-    //       url: null,
-    //       menus: [
-    //         {
-    //           menuid: 72,
-    //           icon: 'el-icon-user',
-    //           menuname: '用户管理',
-    //           hasThird: 'N',
-    //           url: 'system/user',
-    //           menus: null
-    //         },
-    //         {
-    //           menuid: 73,
-    //           icon: 'el-icon-postcard',
-    //           menuname: '角色管理',
-    //           hasThird: 'N',
-    //           url: 'system/Role',
-    //           menus: null
-    //         },
-    //         {
-    //           menuid: 74,
-    //           icon: 'el-icon-paperclip',
-    //           menuname: '文章分类管理',
-    //           hasThird: 'N',
-    //           url: 'system/category',
-    //           menus: null
-    //         }
-    //       ]
-    //     }
-    //   ],
-    //   msg: 'success'
-    // }
-          // this.allmenu = res.data
 
     menu(localStorage.getItem('logintoken'))
       .then(res => {
+        console.log(res)
         if (res.code == 200) {
           this.allmenu = res.data
         } else {

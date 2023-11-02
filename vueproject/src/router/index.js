@@ -5,21 +5,9 @@ import Router from 'vue-router';
 import login from '@/views/login';
 // 首页
 import index from '@/views/index';
-/**
- * 基础菜单
- */
-// 文章管理
-import Article from '@/views/article/Article';
 
-/**
- * 系统管理
- */
-// 用户管理
-import user from '@/views/system/user';
-// 角色管理
-import Role from '@/views/system/Role';
-// 文章分类管理
-import category from '@/views/system/category';
+
+import emails from '@/views/receive/emails'
 
 
 // 启用路由
@@ -49,30 +37,16 @@ export default new Router({
         component: index,
         iconCls: 'el-icon-tickets',
         children: [{
-            path: '/article/Article',
-            name: '文章管理',
-            component: Article,
+            path: '/receive/emails',
+            name: '收件箱',
+            component: emails,
             meta: {
                 requireAuth: true
             }
         }, {
-            path: '/system/user',
-            name: '用户管理',
-            component: user,
-            meta: {
-                requireAuth: true
-            }
-        }, {
-            path: '/system/Role',
-            name: '角色管理',
-            component: Role,
-            meta: {
-                requireAuth: true
-            }
-        }, {
-            path: '/system/category',
-            name: '文章分类管理',
-            component: category,
+            path: '/receive/emails',
+            name: '收件箱',
+            component: emails,
             meta: {
                 requireAuth: true
             }

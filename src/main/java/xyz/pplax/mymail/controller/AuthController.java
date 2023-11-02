@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.wf.captcha.GifCaptcha;
 import com.wf.captcha.utils.CaptchaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import xyz.pplax.mymail.model.dto.LoginDto;
 import xyz.pplax.mymail.model.entity.User;
@@ -32,7 +30,14 @@ public class AuthController {
     @Autowired
     private RedisOperator redisOperator;
 
-    @PostMapping("login")
+    /**
+     * 登录
+     * @param request
+     * @param loginDto
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/login")
     public String login(HttpServletRequest request, LoginDto loginDto) throws Exception {
         // 从session中获取验证码
         HttpSession session = request.getSession();
@@ -76,6 +81,18 @@ public class AuthController {
         } else {
             return JSON.toJSONString(ResponseResult.error(msg));
         }
+    }
+
+
+    /**
+     * 登出
+     * @param token
+     * @return
+     */
+    @DeleteMapping("/logout")
+    public String logout(@RequestParam("token") String token) {
+        System.out.println(token);
+        return "";
     }
 
 

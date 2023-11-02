@@ -3,10 +3,11 @@ import { loginreq, req } from './axiosFun';
 
 // 登录接口
 export const login = (params) => { return loginreq("post", "/api/auth/login", params) };
-// 获取用户菜单
-export const menu = (params) => { return axios.get("/api/menus?&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
 // 退出接口
-export const loginout = () => { return axios.delete("/api/logout?&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
+// export const logout = ()
+export const loginout = () => { return axios.delete("/api/auth/logout?&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
+// 获取用户菜单
+export const menu = (params) => { return req("get", "/api/menus", {}).then(res => res.data) };
 
 /**
  * 用户管理

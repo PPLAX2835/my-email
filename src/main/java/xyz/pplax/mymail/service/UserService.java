@@ -1,9 +1,12 @@
 package xyz.pplax.mymail.service;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.pplax.mymail.mapper.UserMapper;
 import xyz.pplax.mymail.model.entity.User;
+import xyz.pplax.mymail.utils.TokenUtils;
 
 @Service
 public class UserService {
@@ -28,6 +31,27 @@ public class UserService {
     }
 
     public User selectByUsernameAndPassword(String username, String password) {
+        return userMapper.selectByUsernameAndPassword(username, password);
+    }
+
+    public User selectByToken(String token) {
+        String username = null;
+        String password = null;
+        // 解析token
+        try {
+            Claims claims = TokenUtils.parseToken(token);
+            username = claims.getSubject();
+            password = (String) claims.get("password");
+        } catch (ExpiredJwtException e) {
+            // token过期下线账号
+            Claims claims = e.getClaims();
+            username = claims.getSubject();
+            password = (String) claims.get("password");
+            User user = userMapper.selectByUsernameAndPassword(username, password);
+            if (user != null) {
+                return null;
+            }
+        }
         return userMapper.selectByUsernameAndPassword(username, password);
     }
 

@@ -119,11 +119,10 @@ export default {
               setTimeout(() => {
                 this.logining = false
                 // // 缓存token
-                localStorage.setItem('logintoken', res.data.token)
+                localStorage.setItem('logintoken', res.data)
                 // 缓存用户个人信息
-                localStorage.setItem('userdata', JSON.stringify(res.data))
                 this.$store.commit('login', 'true')
-                this.$router.push({ path: '/article/Article' })
+                this.$router.push({ path: '/receive/emails' })
               }, 1000)
             } else {
               this.getcode()
