@@ -1,5 +1,6 @@
 package xyz.pplax.mymail.service;
 
+import com.sun.mail.util.MailSSLSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,8 @@ import org.springframework.util.StringUtils;
 import xyz.pplax.mymail.mapper.EmailMapper;
 import xyz.pplax.mymail.model.entity.Email;
 
-import javax.mail.MessagingException;
+import javax.mail.*;
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -48,6 +50,28 @@ public class MailService {
     }
 
     /**
+     * 检查是否有效
+     * @return
+     * @throws GeneralSecurityException
+     */
+    public boolean checkSend(String host, String port, String emailAddress, String password) throws GeneralSecurityException {
+
+        Email email = new Email();
+        email.setPort(Integer.valueOf(port));
+        email.setHost(host);
+        email.setEmailAddress(emailAddress);
+        email.setEmailPassword(password);
+
+        try {
+            sendMailMessage(email, "lax1458667357@163.com", "test", "text", null, null);
+            return true;
+        } catch (MessagingException e) {
+            return false;
+        }
+
+    }
+
+    /**
      * 发送邮件
      * @param to
      * @param subject
@@ -55,50 +79,44 @@ public class MailService {
      * @param attachment
      * @param attachmentFileName
      */
-    public void sendMailMessage(Email email, String to, String subject, String text, byte[] attachment, String attachmentFileName){
+    public void sendMailMessage(Email email, String to, String subject, String text, byte[] attachment, String attachmentFileName) throws MessagingException {
 
-        try {
-
-            JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-            javaMailSender.setHost(email.getHost());
-            javaMailSender.setPort(email.getPort());
-            javaMailSender.setUsername(email.getEmailAddress());
-            javaMailSender.setPassword(email.getEmailPassword());
-            javaMailSender.setDefaultEncoding("UTF-8");
-            Properties properties = new Properties();
-            properties.setProperty("mail.smtp.auth", "true");
-            javaMailSender.setJavaMailProperties(properties);
+        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        javaMailSender.setHost(email.getHost());
+        javaMailSender.setPort(email.getPort());
+        javaMailSender.setUsername(email.getEmailAddress());
+        javaMailSender.setPassword(email.getEmailPassword());
+        javaMailSender.setDefaultEncoding("UTF-8");
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.auth", "true");
+        javaMailSender.setJavaMailProperties(properties);
 
 
-            /**
-             * 建立邮件
-             */
-            //true 代表支持复杂的类型
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(javaMailSender.createMimeMessage(),true);
-            //邮件发信人
-            mimeMessageHelper.setFrom(email.getEmailAddress());
-            //邮件收信人  1或多个
-            mimeMessageHelper.setTo(to.split(","));
-            //邮件主题
-            mimeMessageHelper.setSubject(subject);
-            //邮件内容
-            mimeMessageHelper.setText(text);
-            //邮件发送时间
-            mimeMessageHelper.setSentDate(new Date());
-            // 添加附件
-            if (attachment != null) {
-                // Attach the file
-                mimeMessageHelper.addAttachment(attachmentFileName, new ByteArrayResource(attachment));
-            }
-
-            //发送邮件
-            javaMailSender.send(mimeMessageHelper.getMimeMessage());
-            System.out.println("发送邮件成功："+email.getEmailAddress()+"->"+to);
-
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            System.out.println("发送邮件失败："+e.getMessage());
+        /**
+         * 建立邮件
+         */
+        //true 代表支持复杂的类型
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(javaMailSender.createMimeMessage(),true);
+        //邮件发信人
+        mimeMessageHelper.setFrom(email.getEmailAddress());
+        //邮件收信人  1或多个
+        mimeMessageHelper.setTo(to.split(","));
+        //邮件主题
+        mimeMessageHelper.setSubject(subject);
+        //邮件内容
+        mimeMessageHelper.setText(text);
+        //邮件发送时间
+        mimeMessageHelper.setSentDate(new Date());
+        // 添加附件
+        if (attachment != null) {
+            // Attach the file
+            mimeMessageHelper.addAttachment(attachmentFileName, new ByteArrayResource(attachment));
         }
+
+        //发送邮件
+        javaMailSender.send(mimeMessageHelper.getMimeMessage());
+        System.out.println("发送邮件成功："+email.getEmailAddress()+"->"+to);
+
     }
 }
 

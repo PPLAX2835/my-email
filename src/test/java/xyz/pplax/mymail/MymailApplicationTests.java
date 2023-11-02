@@ -15,6 +15,7 @@ import xyz.pplax.mymail.service.MailService;
 import xyz.pplax.mymail.service.MenuService;
 import xyz.pplax.mymail.service.UserService;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,8 @@ class MymailApplicationTests {
             System.out.println(JSON.toJSONString(ResponseResult.success()));
         } catch (IOException e) {
             System.out.println(JSON.toJSONString(ResponseResult.error(e.getMessage())));
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 
