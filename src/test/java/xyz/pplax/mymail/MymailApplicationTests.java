@@ -10,6 +10,7 @@ import xyz.pplax.mymail.mapper.UserMapper;
 import xyz.pplax.mymail.model.entity.Email;
 import xyz.pplax.mymail.model.entity.Menu;
 import xyz.pplax.mymail.model.entity.User;
+import xyz.pplax.mymail.model.mail.MailMessage;
 import xyz.pplax.mymail.model.resp.ResponseResult;
 import xyz.pplax.mymail.service.MailService;
 import xyz.pplax.mymail.service.MenuService;
@@ -27,37 +28,59 @@ class MymailApplicationTests {
     MailService mailService;
 
     @Test
-    void sentEmailTest() {
+    public void sentEmailTest() throws MessagingException {
+        MailMessage mailMessage = new MailMessage();
 
-        String recipientEmail = "lax1458667357@163.com";
-        String subject = "这是一条标题";
-        String content = "这是一段内容";
-        MultipartFile attachment = null;
+        mailMessage.setPort("587");
+        mailMessage.setHost("smtp.qq.com");
+        mailMessage.setEmailAddress("1458667357@qq.com");
+        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
+        mailMessage.setSubject("这是一条标题");
+        mailMessage.setText("这是一条内容");
+        mailMessage.setProtocol("SMTP");
+        mailMessage.setReceiverEmailAddress("lax1458667357@163.com");
 
-        // 查询用户对应邮箱
-        Email email = new Email();
-        email.setEmailAddress("1458667357@qq.com");
-        email.setUid(7312L);
-        List<Email> emails = emailMapper.selectListSelective(email);
-        if (emails.size() == 0) {
-            throw new RuntimeException("找不到邮箱，可能是参数错误");
-        }
-        Email userEmail = emails.get(0);
+        mailService.sendMailMessage(mailMessage);
 
-        try {
-            if (attachment != null) {
-                byte[] attachmentBytes = attachment.getBytes();
-                mailService.sendMailMessage(userEmail, recipientEmail, subject, content, attachmentBytes, attachment.getOriginalFilename());
-            } else {
-                mailService.sendMailMessage(userEmail, recipientEmail, subject, content, null, null);
-            }
-            System.out.println(JSON.toJSONString(ResponseResult.success()));
-        } catch (IOException e) {
-            System.out.println(JSON.toJSONString(ResponseResult.error(e.getMessage())));
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
     }
+
+//    @Test
+//    void sentEmailTest() {
+//
+////        String recipientEmail = "lax1458667357@163.com";
+////        String subject = "这是一条标题";
+////        String content = "这是一段内容";
+////        MultipartFile attachment = null;
+////
+////        // 查询用户对应邮箱
+////        Email email = new Email();
+////        email.setEmailAddress("1458667357@qq.com");
+////        email.setUid(7312L);
+////        List<Email> emails = emailMapper.selectListSelective(email);
+////        if (emails.size() == 0) {
+////            throw new RuntimeException("找不到邮箱，可能是参数错误");
+////        }
+////        Email userEmail = emails.get(0);
+//
+//        MailMessage mailMessage = new MailMessage();
+//        mailMessage.setEmailAddress("lax1458667357@163.com");
+//        mailMessage.setPort("587");
+//        mailMessage.setHost("smtp.qq.com");
+//        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
+//
+//
+//        try {
+////            if (attachment != null) {
+////                byte[] attachmentBytes = attachment.getBytes();
+////                mailService.sendMailMessage(mailMessage, "lax1458667357@163.com", "这是一条标题", "这是一段内容", attachmentBytes, attachment.getOriginalFilename());
+////            } else {
+//                mailService.sendMailMessage(mailMessage, "lax1458667357@163.com", "这是一条标题", "这是一段内容", null, null);
+////            }
+//            System.out.println(JSON.toJSONString(ResponseResult.success()));
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     @Autowired
@@ -76,9 +99,7 @@ class MymailApplicationTests {
         Email email = new Email();
         email.setEmailAddress("1458667357@qq.com");
         email.setEmailPassword("dvbviwakqsrvbadb");
-        email.setHost("smtp.qq.com");
         email.setUid(1L);
-        email.setPort(587);
         email.setCreateTime(new Date());
 
         emailMapper.insert(email);

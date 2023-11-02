@@ -11,6 +11,7 @@ import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.dto.AddEmailDto;
 import xyz.pplax.mymail.model.entity.Email;
 import xyz.pplax.mymail.model.entity.User;
+import xyz.pplax.mymail.model.mail.MailMessage;
 import xyz.pplax.mymail.model.resp.ResponseResult;
 import xyz.pplax.mymail.service.EmailService;
 import xyz.pplax.mymail.service.MailService;
@@ -64,29 +65,29 @@ public class EmailController {
         email.setCreateTime(new Date());
         email.setEmailPassword(addEmailDto.getEmailPassword());
 
-        System.out.println(addEmailDto.getEmailPassword());
+        MailMessage mailMessage = new MailMessage();
 
         String host = addEmailDto.getType();
         switch (host) {
             case EmailConstants.QQ_EMAIL_SUFFIX:
-                email.setHost(EmailConstants.QQ_EMAIL_HOST);
-                email.setPort(EmailConstants.QQ_EMAIL_PORT);
+                mailMessage.setHost(EmailConstants.QQ_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.QQ_EMAIL_SEND_PORT);
                 break;
             case EmailConstants.ALIYUN_EMAIL_SUFFIX:
-                email.setHost(EmailConstants.ALIYUN_EMAIL_HOST);
-                email.setPort(EmailConstants.ALIYUN_EMAIL_PORT);
+                mailMessage.setHost(EmailConstants.ALIYUN_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.ALIYUN_EMAIL_SEND_PORT);
                 break;
             case EmailConstants.SINA_EMAIL_SUFFIX:
-                email.setHost(EmailConstants.SINA_EMAIL_HOST);
-                email.setPort(EmailConstants.SINA_EMAIL_PORT);
+                mailMessage.setHost(EmailConstants.SINA_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.SINA_EMAIL_SEND_PORT);
                 break;
             case EmailConstants.NETEASE_EMAIL_SUFFIX:
-                email.setHost(EmailConstants.NETEASE_EMAIL_HOST);
-                email.setPort(EmailConstants.NETEASE_EMAIL_PORT);
+                mailMessage.setHost(EmailConstants.NETEASE_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SEND_PORT);
                 break;
         }
 
-        boolean b = mailService.checkSend(email.getHost(), email.getPort().toString(), email.getEmailAddress(), email.getEmailPassword());
+        boolean b = mailService.checkSend(mailMessage.getHost(), mailMessage.getPort().toString(), email.getEmailAddress(), email.getEmailPassword());
 
         if (b) {
             // 检查是否重复添加

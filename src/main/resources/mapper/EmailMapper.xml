@@ -6,12 +6,10 @@
     <result column="uid" jdbcType="BIGINT" property="uid" />
     <result column="email_address" jdbcType="VARCHAR" property="emailAddress" />
     <result column="email_password" jdbcType="VARCHAR" property="emailPassword" />
-    <result column="host" jdbcType="VARCHAR" property="host" />
-    <result column="port" jdbcType="INTEGER" property="port" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    email_id, `uid`, email_address, email_password, `host`, port, create_time
+    email_id, `uid`, email_address, email_password, create_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -33,12 +31,6 @@
     <if test="emailPassword != null">
       email_password = #{emailPassword} and
     </if>
-    <if test="host != null">
-      `host` = #{host} and
-    </if>
-    <if test="port != null">
-      port = #{port} and
-    </if>
     <if test="createTime != null">
       create_time = #{createTime} and
     </if>
@@ -49,11 +41,10 @@
     where email_id = #{emailId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="email_id" keyProperty="emailId" parameterType="xyz.pplax.mymail.model.entity.Email" useGeneratedKeys="true">
-    insert into email (`uid`, email_address, email_password, 
-      `host`, port, create_time
+    insert into email (`uid`, email_address, email_password, create_time
       )
     values (#{uid,jdbcType=BIGINT}, #{emailAddress,jdbcType=VARCHAR}, #{emailPassword,jdbcType=VARCHAR}, 
-      #{host,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" keyColumn="email_id" keyProperty="emailId" parameterType="xyz.pplax.mymail.model.entity.Email" useGeneratedKeys="true">
@@ -68,12 +59,6 @@
       <if test="emailPassword != null">
         email_password,
       </if>
-      <if test="host != null">
-        `host`,
-      </if>
-      <if test="port != null">
-        port,
-      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -87,12 +72,6 @@
       </if>
       <if test="emailPassword != null">
         #{emailPassword,jdbcType=VARCHAR},
-      </if>
-      <if test="host != null">
-        #{host,jdbcType=VARCHAR},
-      </if>
-      <if test="port != null">
-        #{port,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -111,12 +90,6 @@
       <if test="emailPassword != null">
         email_password = #{emailPassword,jdbcType=VARCHAR},
       </if>
-      <if test="host != null">
-        `host` = #{host,jdbcType=VARCHAR},
-      </if>
-      <if test="port != null">
-        port = #{port,jdbcType=INTEGER},
-      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -128,8 +101,6 @@
     set `uid` = #{uid,jdbcType=BIGINT},
       email_address = #{emailAddress,jdbcType=VARCHAR},
       email_password = #{emailPassword,jdbcType=VARCHAR},
-      `host` = #{host,jdbcType=VARCHAR},
-      port = #{port,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where email_id = #{emailId,jdbcType=BIGINT}
   </update>

@@ -31,16 +31,6 @@ public class Email implements Serializable {
     private String emailPassword;
 
     /**
-     * 邮箱host
-     */
-    private String host;
-
-    /**
-     * 邮箱host端口
-     */
-    private Integer port;
-
-    /**
      * 创建时间
      */
     private Date createTime;

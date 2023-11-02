@@ -1,36 +1,30 @@
 package xyz.pplax.mymail.model.mail;
 
+import lombok.Data;
+
+@Data
 public class MailMessage {
 
-    private String messageCode;
+    private String host;
 
-    private String messageStatus;
+    private String port;
 
-    private String cause;
+    private String protocol;
 
-    public String getMessageCode() {
-        return messageCode;
-    }
+    private String emailAddress;
 
-    public void setMessageCode(String messageCode) {
-        this.messageCode = messageCode;
-    }
+    private String emailPassword;
 
-    public String getMessageStatus() {
-        return messageStatus;
-    }
+    private String senderEmailAddress;
 
-    public void setMessageStatus(String messageStatus) {
-        this.messageStatus = messageStatus;
-    }
+    private String receiverEmailAddress;
 
-    public String getCause() {
-        return cause;
-    }
+    private String subject;
 
-    public void setCause(String cause) {
-        this.cause = cause;
-    }
+    private String text;
 
+    private byte[] attachment;
+
+    private String attachmentFileName;
 
 }
