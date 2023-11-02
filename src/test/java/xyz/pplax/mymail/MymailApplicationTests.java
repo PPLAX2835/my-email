@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.pplax.mymail.mapper.EmailMapper;
 import xyz.pplax.mymail.mapper.UserMapper;
@@ -11,6 +13,7 @@ import xyz.pplax.mymail.model.entity.Email;
 import xyz.pplax.mymail.model.entity.User;
 import xyz.pplax.mymail.model.resp.ResponseResult;
 import xyz.pplax.mymail.service.MailService;
+import xyz.pplax.mymail.utils.RedisOperator;
 
 import java.io.IOException;
 import java.util.Date;
