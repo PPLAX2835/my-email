@@ -8,9 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 import xyz.pplax.mymail.mapper.EmailMapper;
 import xyz.pplax.mymail.mapper.UserMapper;
 import xyz.pplax.mymail.model.entity.Email;
+import xyz.pplax.mymail.model.entity.Menu;
 import xyz.pplax.mymail.model.entity.User;
 import xyz.pplax.mymail.model.resp.ResponseResult;
 import xyz.pplax.mymail.service.MailService;
+import xyz.pplax.mymail.service.MenuService;
 import xyz.pplax.mymail.service.UserService;
 
 import java.io.IOException;
@@ -86,6 +88,24 @@ class MymailApplicationTests {
     public void loginTest() {
         User user = userService.selectByUsernameAndPassword("PPLAX", "123456");
         System.out.println(JSON.toJSONString(user));
+    }
+
+
+    @Autowired
+    MenuService menuService;
+    @Test
+    public void menuTest() {
+        List<Menu> menus = menuService.selectParentMenuList();
+
+        List<Menu> menus1 = menuService.selectListByPrimaryKey(1);
+
+        Menu menu = new Menu();
+        menu.setParentMenuId(1);
+        List<Menu> menus2 = menuService.selectListSelective(menu);
+
+        System.out.println(JSON.toJSONString(menus));
+        System.out.println(JSON.toJSONString(menus1));
+        System.out.println(menus2);
     }
 
 }

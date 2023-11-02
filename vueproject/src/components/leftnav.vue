@@ -6,15 +6,15 @@
     <div class="logobox">
       <img class="logoimg" src="../assets/img/logo.png" alt="">
     </div>
-    <el-submenu v-for="menu in allmenu" :key="menu.menuid" :index="menu.menuname">
+    <el-submenu v-for="menu in allmenu" :key="menu.menuId" :index="menu.name">
       <template slot="title">
         <i class="el-icon" :class="menu.icon"></i>
-        <span>{{menu.menuname}}</span>
+        <span>{{menu.name}}</span>
       </template>
       <el-menu-item-group>
-        <el-menu-item v-for="chmenu in menu.menus" :index="'/'+chmenu.url" :key="chmenu.menuid">
+        <el-menu-item v-for="chmenu in menu.chileMenus" :index="'/'+chmenu.url" :key="chmenu.menuId">
           <i class="el-icon" :class="chmenu.icon"></i>
-          <span>{{chmenu.menuname}}</span>
+          <span>{{chmenu.name}}</span>
         </el-menu-item>
       </el-menu-item-group>
     </el-submenu>
@@ -33,102 +33,76 @@ export default {
   // 创建完毕状态(里面是操作)
   created() {
     // 获取图形验证码
-    let res = {
-      success: true,
-      data: [
-        {
-          menuid: 1,
-          icon: 'el-icon-eleme',
-          menuname: '基础管理',
-          hasThird: null,
-          url: null,
-          menus: [
-            {
-              menuid: 1,
-              icon: 'el-icon-document-copy',
-              menuname: '文章管理',
-              hasThird: 'N',
-              url: 'article/Article',
-              menus: null
-            },
-            // {
-            //   menuid: 2,
-            //   icon: 'el-icon-chat-line-round',
-            //   menuname: '评论管理',
-            //   hasThird: 'N',
-            //   url: '#',
-            //   menus: null
-            // }
-          ]
-        },
-        {
-          menuid: 71,
-          icon: 'el-icon-setting',
-          menuname: '系统管理',
-          hasThird: null,
-          url: null,
-          menus: [
-            {
-              menuid: 72,
-              icon: 'el-icon-user',
-              menuname: '用户管理',
-              hasThird: 'N',
-              url: 'system/user',
-              menus: null
-            },
-            {
-              menuid: 73,
-              icon: 'el-icon-postcard',
-              menuname: '角色管理',
-              hasThird: 'N',
-              url: 'system/Role',
-              menus: null
-            },
-            {
-              menuid: 74,
-              icon: 'el-icon-paperclip',
-              menuname: '文章分类管理',
-              hasThird: 'N',
-              url: 'system/category',
-              menus: null
-            }
-          ]
-        },
-        // {
-        //   menuid: 150,
-        //   icon: 'el-icon-picture-outline',
-        //   menuname: '图表',
-        //   hasThird: null,
-        //   url: null,
-        //   menus: [
-        //     {
-        //       menuid: 159,
-        //       icon: 'el-icon-view',
-        //       menuname: '数据可视化',
-        //       hasThird: 'N',
-        //       url: 'charts/statistics',
-        //       menus: null
-        //     }
-        //   ]
-        // }
-      ],
-      msg: 'success'
-    }
-          this.allmenu = res.data
-
-    // menu(localStorage.getItem('logintoken'))
-    //   .then(res => {
-    //     console.log(JSON.stringify(res))
-    //     if (res.success) {
-    //       this.allmenu = res.data
-    //     } else {
-    //       this.$message.error(res.msg)
-    //       return false
+    // let res = {
+    //   success: true,
+    //   data: [
+    //     {
+    //       menuid: 1,
+    //       icon: 'el-icon-eleme',
+    //       menuname: '基础管理',
+    //       hasThird: null,
+    //       url: null,
+    //       menus: [
+    //         {
+    //           menuid: 1,
+    //           icon: 'el-icon-document-copy',
+    //           menuname: '文章管理',
+    //           hasThird: 'N',
+    //           url: 'article/Article',
+    //           menus: null
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       menuid: 71,
+    //       icon: 'el-icon-setting',
+    //       menuname: '系统管理',
+    //       hasThird: null,
+    //       url: null,
+    //       menus: [
+    //         {
+    //           menuid: 72,
+    //           icon: 'el-icon-user',
+    //           menuname: '用户管理',
+    //           hasThird: 'N',
+    //           url: 'system/user',
+    //           menus: null
+    //         },
+    //         {
+    //           menuid: 73,
+    //           icon: 'el-icon-postcard',
+    //           menuname: '角色管理',
+    //           hasThird: 'N',
+    //           url: 'system/Role',
+    //           menus: null
+    //         },
+    //         {
+    //           menuid: 74,
+    //           icon: 'el-icon-paperclip',
+    //           menuname: '文章分类管理',
+    //           hasThird: 'N',
+    //           url: 'system/category',
+    //           menus: null
+    //         }
+    //       ]
     //     }
-    //   })
-    //   .catch(err => {
-    //     this.$message.error('菜单加载失败，请稍后再试！')
-    //   })
+    //   ],
+    //   msg: 'success'
+    // }
+          // this.allmenu = res.data
+
+    menu(localStorage.getItem('logintoken'))
+      .then(res => {
+        if (res.code == 200) {
+          this.allmenu = res.data
+        } else {
+          this.$message.error(res.msg)
+          return false
+        }
+      })
+      .catch(err => {
+        this.$message.error('菜单加载失败，请稍后再试！')
+      })
     // 监听
     this.$root.Bus.$on('toggle', value => {
       this.collapsed = !value
