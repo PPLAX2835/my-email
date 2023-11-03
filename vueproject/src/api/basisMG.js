@@ -8,6 +8,8 @@ export const EmailList = () => { return req("get", "/api/email/emails", {}).then
 export const addEmail = (params) => { return req("post", "/api/email/add", params).then(res => res.data) };
 // 获得收件箱
 export const InboxList = (params) => { return axios.get("/api/messages/inbox?emailAddress=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
+// 获得发件箱
+export const SentList = (params) => { return axios.get("/api/messages/sent?emailAddress=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
 
 
 /**

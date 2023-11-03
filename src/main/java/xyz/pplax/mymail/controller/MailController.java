@@ -59,7 +59,56 @@ public class MailController {
         } else {
             Email email1 = emails.get(0);
             MailMessage mailMessage = new MailMessage();
-            mailMessage.setProtocol("imap");
+            mailMessage.setProtocol(EmailConstants.QQ_EMAIL_SEND_PROTOCOL);
+            mailMessage.setEmailAddress(emailAddress);
+            mailMessage.setEmailPassword(email1.getEmailPassword());
+
+            String suffix = emailAddress.substring(emailAddress.indexOf('@'), emailAddress.length());
+            switch (suffix) {
+                case EmailConstants.QQ_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.QQ_EMAIL_RECEIVE_HOST);
+                    mailMessage.setPort(EmailConstants.QQ_EMAIL_RECEIVE_PORT);
+                    break;
+                case EmailConstants.ALIYUN_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.ALIYUN_EMAIL_RECEIVE_HOST);
+                    mailMessage.setPort(EmailConstants.ALIYUN_EMAIL_RECEIVE_PORT);
+                    break;
+                case EmailConstants.SINA_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.SINA_EMAIL_RECEIVE_HOST);
+                    mailMessage.setPort(EmailConstants.SINA_EMAIL_RECEIVE_PORT);
+                    break;
+                case EmailConstants.NETEASE_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.NETEASE_EMAIL_RECEIVE_HOST);
+                    mailMessage.setPort(EmailConstants.NETEASE_EMAIL_RECEIVE_PORT);
+                    break;
+            }
+            return JSON.toJSONString(ResponseResult.success(mailService.getInBoxMessages(mailMessage, EmailConstants.INBOX_FOLDER, new Date(), 50)));
+
+        }
+    }
+
+    /**
+     * 获得发件箱
+     * @param token
+     * @param emailAddress
+     * @return
+     * @throws MessagingException
+     */
+    @GetMapping("sent")
+    public String getSent(@RequestParam("token") String token, @RequestParam("emailAddress") String emailAddress) throws MessagingException {
+
+        User user = userService.selectByToken(token);
+        Email email = new Email();
+        email.setUid(user.getUid());
+        email.setEmailAddress(emailAddress);
+        List<Email> emails = emailService.selectListSelective(email);
+
+        if (emails.size() == 0) {
+            return JSON.toJSONString(ResponseResult.error("参数错误"));
+        } else {
+            Email email1 = emails.get(0);
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.setProtocol(EmailConstants.QQ_EMAIL_SEND_PROTOCOL);
             mailMessage.setEmailAddress(emailAddress);
             mailMessage.setEmailPassword(email1.getEmailPassword());
 
@@ -82,13 +131,18 @@ public class MailController {
                     mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SEND_PORT);
                     break;
             }
-            return JSON.toJSONString(ResponseResult.success(mailService.getInBoxMessages(mailMessage, EmailConstants.INBOX_FOLDER, new Date(), 50)));
+            return JSON.toJSONString(ResponseResult.success(mailService.getInBoxMessages(mailMessage, EmailConstants.SENT_MESSAGES_FOLDER, new Date(), 50)));
 
         }
     }
 
 
-
+    /**
+     * 下载附件
+     * @param httpServletResponse
+     * @param fileName
+     * @throws IOException
+     */
     @GetMapping("/attachment")
     public void downloadAttachment(HttpServletResponse httpServletResponse, @RequestParam("fileName") String fileName) throws IOException {
 

@@ -7,7 +7,11 @@ import login from '@/views/login';
 import index from '@/views/index';
 
 
-import emails from '@/views/receive/emails'
+// 收件箱
+import inboxEmails from '@/views/receive/emails'
+// 发件箱
+import sentEmails from '@/views/sent/emails'
+
 
 
 // 启用路由
@@ -39,14 +43,14 @@ export default new Router({
         children: [{
             path: '/receive/emails',
             name: '收件箱',
-            component: emails,
+            component: inboxEmails,
             meta: {
                 requireAuth: true
             }
         }, {
-            path: '/receive/emails',
-            name: '收件箱',
-            component: emails,
+            path: '/send/sent',
+            name: 'sentEmails',
+            component: sentEmails,
             meta: {
                 requireAuth: true
             }

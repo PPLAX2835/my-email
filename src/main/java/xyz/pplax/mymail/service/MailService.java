@@ -133,18 +133,12 @@ public class MailService {
      * @throws MessagingException
      */
     public List<MailMessage> getInBoxMessages(MailMessage mailMessage, String type, Date beginDate, int numberOfDays) throws MessagingException {
-        /*************************************/
-
-
 
         Properties props = new Properties(); // 参数配置
-        props.setProperty("mail.transport.protocol", mailMessage.getProtocol()); // 使用的协议(JavaMail规范要求)
-        props.setProperty("mail.smtp.host", mailMessage.getHost()); // 发件人的邮箱的SMTP服务器地址
-        props.setProperty("mail.smtp.auth", "true"); // 需要请求认证
-        props.setProperty("mail.smtp.port", mailMessage.getPort());
-        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.setProperty("mail.smtp.socketFactory.fallback", "false");
-        props.setProperty("mail.smtp.socketFactory.port", mailMessage.getPort());
+        props.setProperty("mail.store.protocol", mailMessage.getProtocol()); // 使用IMAP协议进行邮件接收
+        props.setProperty("mail.imap.host", mailMessage.getHost()); // IMAP服务器地址
+        props.setProperty("mail.imap.port", mailMessage.getPort()); // IMAP服务器端口号
+        props.setProperty("mail.imap.ssl.enable", "true"); // 使用SSL加密连接
 
         // 建立会话
         Session session = Session.getDefaultInstance(props);
@@ -203,6 +197,7 @@ public class MailService {
                 System.out.println(e.getMessage());
             }
         }
+
 
         return mailMessageList;
     }

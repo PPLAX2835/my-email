@@ -132,7 +132,6 @@ export default {
     getdata(parameter) {
       this.loading = true
 
-
       if (this.$globle.EMAILS == 0) {
         /**
          * 获取用户邮箱
@@ -168,6 +167,27 @@ export default {
             this.user = res.data
           }
         })
+      } else {
+        InboxList(this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress)
+          .then(res => {
+            this.loading = false
+            if (res.code == 200) {
+              this.listData = res.data
+              // 分页赋值
+              this.pageparm.currentPage = this.formInline.page
+              this.pageparm.pageSize = this.formInline.limit
+              this.pageparm.total = res.count
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.message
+              })
+            }
+          })
+          .catch(err => {
+            this.loading = false
+            this.$message.error('菜单加载失败，请稍后再试！')
+          })
       }
     },
     
