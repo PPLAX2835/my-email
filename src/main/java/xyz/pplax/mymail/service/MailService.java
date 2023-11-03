@@ -124,6 +124,12 @@ public class MailService {
     }
 
 
+    /**
+     * 获得收件箱的列表
+     * @param mailMessage
+     * @return
+     * @throws MessagingException
+     */
     public List<MailMessage> getMessages(MailMessage mailMessage) throws MessagingException {
         Properties props = System.getProperties();
         props.put("mail.smtp.host", "smtp.163.com");
@@ -135,21 +141,21 @@ public class MailService {
         store.connect();
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_ONLY);
-        Message message[] = folder.getMessages();
+        Message[] message = folder.getMessages();
         System.out.println("Messages's length: " + message.length);
         ReciveOneMail pmm = null;
 
         List<MailMessage> mailMessageList = new ArrayList<>();
-        for (int i = 0; i < message.length; i++) {
+        for (Message value : message) {
             try {
-                pmm = new ReciveOneMail((MimeMessage) message[i]);
+                pmm = new ReciveOneMail((MimeMessage) value);
 
                 MailMessage mailMessage1 = new MailMessage();
                 mailMessage1.setSubject(pmm.getSubject());
                 mailMessage1.setSentDate(pmm.getSentDate());
                 mailMessage1.setReplySign(pmm.getReplySign());
                 mailMessage1.setHasRead(pmm.isNew());
-                mailMessage1.setHasAttachment(pmm.isContainAttach((Part) message[i]));
+                mailMessage1.setHasAttachment(pmm.isContainAttach((Part) value));
                 mailMessage1.setSenderEmailAddress(pmm.getFrom());
                 mailMessage1.setReceiverEmailAddress(pmm.getMailAddress("to"));
                 mailMessage1.setCcEmailAddress(pmm.getMailAddress("cc"));
@@ -158,13 +164,12 @@ public class MailService {
                 mailMessage1.setText(pmm.getBodyText());
 
                 pmm.setAttachPath(fileSavePath);
-                pmm.saveAttachMent((Part) message[i]);
+                pmm.saveAttachMent((Part) value);
                 mailMessage1.setAttachmentFileName(pmm.getAttachName());
-
 
                 mailMessageList.add(mailMessage1);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
 
         }
