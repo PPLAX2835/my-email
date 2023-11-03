@@ -19,9 +19,9 @@ public class FilterConfig {
         registration.setFilter(new TokenCheckFilter(userService));
 
         // 指定需要过滤的URL
-        registration.addUrlPatterns("/api/User/*");
-        registration.addUrlPatterns("/api/Article/*");
-        registration.addUrlPatterns("/api/Role/*");
+        registration.addUrlPatterns("/api/email/*");
+        registration.addUrlPatterns("/api/menus/*");
+        registration.addUrlPatterns("/api/user/*");
 
         return registration;
     }

@@ -61,7 +61,6 @@
 <script>
 import Pagination from '../../components/Pagination'
 import editor from '../../components/RichTextEditor.vue'
-import { sendEmail } from '../../api/basisMG'
 import Axios from 'axios'
 
 export default {

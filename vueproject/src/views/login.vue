@@ -31,8 +31,6 @@
 <script type="text/ecmascript-6">
 import { login } from '../api/userMG'
 import { setCookie, getCookie, delCookie, encrypt, padStringWithRandom} from '../utils/util'
-import md5 from 'js-md5'
-import Axios from 'axios'
 export default {
   name: 'login',
   data() {

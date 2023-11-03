@@ -36,8 +36,7 @@
 </template>
 
 <script>
-import { deptList, deptSave, deptDelete , getUser } from '../../api/userMG'
-import {ArticleContent, ArticleList, ArticleSave, ArticleDelete, SentList, EmailList} from '../../api/basisMG.js'
+import {SentList, EmailList} from '../../api/basisMG.js'
 import Pagination from '../../components/Pagination'
 import editor from '../../components/RichTextEditor.vue'
 
