@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,13 @@ public class MailController {
     @Autowired
     private EmailService emailService;
 
+    /**
+     * 获得收件箱
+     * @param token
+     * @param emailAddress
+     * @return
+     * @throws MessagingException
+     */
     @GetMapping("inbox")
     public String getInbox(@RequestParam("token") String token, @RequestParam("emailAddress") String emailAddress) throws MessagingException {
 
@@ -51,7 +59,7 @@ public class MailController {
         } else {
             Email email1 = emails.get(0);
             MailMessage mailMessage = new MailMessage();
-            mailMessage.setProtocol("pop3");
+            mailMessage.setProtocol("imap");
             mailMessage.setEmailAddress(emailAddress);
             mailMessage.setEmailPassword(email1.getEmailPassword());
 
@@ -74,7 +82,7 @@ public class MailController {
                     mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SEND_PORT);
                     break;
             }
-            return JSON.toJSONString(ResponseResult.success(mailService.getMessages(mailMessage, EmailConstants.INBOX_FOLDER)));
+            return JSON.toJSONString(ResponseResult.success(mailService.getInBoxMessages(mailMessage, EmailConstants.INBOX_FOLDER, new Date(), 50)));
 
         }
     }

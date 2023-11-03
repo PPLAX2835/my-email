@@ -1,5 +1,6 @@
 package xyz.pplax.mymail.service;
 
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +11,17 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import xyz.pplax.mymail.mapper.EmailMapper;
+import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.mail.MailMessage;
 import xyz.pplax.mymail.utils.ReciveOneMail;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.ReceivedDateTerm;
+import javax.mail.search.SearchTerm;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * 邮件业务类
@@ -130,23 +132,49 @@ public class MailService {
      * @return
      * @throws MessagingException
      */
-    public List<MailMessage> getMessages(MailMessage mailMessage, String type) throws MessagingException {
-        Properties props = System.getProperties();
-        props.put("mail.smtp.host", mailMessage.getHost());
-        props.put("mail.smtp.auth", "true");
-        Session session = Session.getDefaultInstance(props, null);
-        URLName urln = new URLName(mailMessage.getProtocol(), mailMessage.getHost(), 110, null,
-                mailMessage.getEmailAddress(), mailMessage.getEmailPassword());
-        Store store = session.getStore(urln);
-        store.connect();
+    public List<MailMessage> getInBoxMessages(MailMessage mailMessage, String type, Date beginDate, int numberOfDays) throws MessagingException {
+        /*************************************/
+
+
+
+        Properties props = new Properties(); // 参数配置
+        props.setProperty("mail.transport.protocol", mailMessage.getProtocol()); // 使用的协议(JavaMail规范要求)
+        props.setProperty("mail.smtp.host", mailMessage.getHost()); // 发件人的邮箱的SMTP服务器地址
+        props.setProperty("mail.smtp.auth", "true"); // 需要请求认证
+        props.setProperty("mail.smtp.port", mailMessage.getPort());
+        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.setProperty("mail.smtp.socketFactory.fallback", "false");
+        props.setProperty("mail.smtp.socketFactory.port", mailMessage.getPort());
+
+        // 建立会话
+        Session session = Session.getDefaultInstance(props);
+        session.setDebug(false);
+
+        Store store = session.getStore(mailMessage.getProtocol());
+        store.connect(mailMessage.getHost(), mailMessage.getEmailAddress(), mailMessage.getEmailPassword());// change the user and password accordingly
+
         Folder folder = store.getFolder(type);
         folder.open(Folder.READ_ONLY);
-        Message[] message = folder.getMessages();
-        System.out.println("Messages's length: " + message.length);
-        ReciveOneMail pmm = null;
 
+        // 定义邮件排序规则（按时间由近到远）
+        // 计算开始日期（某一天）
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(beginDate); // 日期
+        Date endDate = calendar.getTime();
+
+        // 计算结束日期（当前日期的numberOfDays天前）
+        calendar.add(Calendar.DAY_OF_MONTH, -numberOfDays);
+        Date startDate = calendar.getTime();
+
+        Date fromDate = calendar.getTime();
+        SearchTerm searchTerm = new ReceivedDateTerm(ComparisonTerm.GT, fromDate);
+
+        // 使用搜索条件过滤并分页查询邮件
+        Message[] messages = folder.search(searchTerm);
+
+        ReciveOneMail pmm = null;
         List<MailMessage> mailMessageList = new ArrayList<>();
-        for (Message value : message) {
+        for (Message value : messages) {
             try {
                 pmm = new ReciveOneMail((MimeMessage) value);
 
@@ -169,10 +197,11 @@ public class MailService {
                 mailMessage1.setAttachmentFileName(pmm.getAttachName());
 
                 mailMessageList.add(mailMessage1);
+
+                System.out.println(JSON.toJSONString(mailMessage1));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
         }
 
         return mailMessageList;
