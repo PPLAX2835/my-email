@@ -2,6 +2,7 @@ package xyz.pplax.mymail.controller;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.pplax.mymail.model.constants.EmailConstants;
@@ -15,20 +16,26 @@ import xyz.pplax.mymail.service.MailService;
 import xyz.pplax.mymail.service.UserService;
 
 import javax.mail.MessagingException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/messages")
 public class MailController {
 
+    @Value("${pplax.file.savepath}")
+    private String fileSavePath;
+
     @Autowired
-    MailService mailService;
+    private MailService mailService;
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @GetMapping("inbox")
     public String getInbox(@RequestParam("token") String token, @RequestParam("emailAddress") String emailAddress) throws MessagingException {
@@ -70,6 +77,29 @@ public class MailController {
             return JSON.toJSONString(ResponseResult.success(mailService.getMessages(mailMessage)));
 
         }
+    }
+
+
+
+    @GetMapping("/attachment")
+    public void downloadAttachment(HttpServletResponse httpServletResponse, @RequestParam("fileName") String fileName) throws IOException {
+
+        System.out.println(fileName);
+
+        // 读到流中
+        InputStream inputStream = new FileInputStream(fileSavePath + fileName);// 文件的存放路径
+        httpServletResponse.reset();
+        httpServletResponse.setContentType("application/octet-stream");
+        String filename = new File(fileSavePath + fileName).getName();
+        httpServletResponse.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
+        ServletOutputStream outputStream = httpServletResponse.getOutputStream();
+        byte[] b = new byte[1024];
+        int len;
+        //从输入流中读取一定数量的字节，并将其存储在缓冲区字节数组中，读到末尾返回-1
+        while ((len = inputStream.read(b)) > 0) {
+            outputStream.write(b, 0, len);
+        }
+        inputStream.close();
     }
 }
 
