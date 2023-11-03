@@ -161,6 +161,7 @@ public class MailService {
                 mailMessage1.setCcEmailAddress(pmm.getMailAddress("cc"));
                 mailMessage1.setBccEmailAddress(pmm.getMailAddress("bcc"));
                 mailMessage1.setMessageId(pmm.getMessageId());
+                pmm.getMailContent((Part) value);
                 mailMessage1.setText(pmm.getBodyText());
 
                 pmm.setAttachPath(fileSavePath);
