@@ -11,6 +11,8 @@ import index from '@/views/index';
 import inboxEmails from '@/views/receive/emails'
 // 发件箱
 import sentEmails from '@/views/sent/emails'
+// 写邮件
+import writeEmails from '@/views/sent/write'
 
 
 
@@ -49,8 +51,15 @@ export default new Router({
             }
         }, {
             path: '/send/sent',
-            name: 'sentEmails',
+            name: '发件箱',
             component: sentEmails,
+            meta: {
+                requireAuth: true
+            }
+        }, {
+            path: '/send/write',
+            name: '写邮件',
+            component: writeEmails,
             meta: {
                 requireAuth: true
             }

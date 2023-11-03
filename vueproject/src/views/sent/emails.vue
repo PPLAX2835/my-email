@@ -7,7 +7,7 @@
     <!-- 面包屑导航 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>收件箱</el-breadcrumb-item>
+      <el-breadcrumb-item>发件箱</el-breadcrumb-item>
     </el-breadcrumb>
     <!--列表-->
     <el-table size="small" :data="listData" highlight-current-row  v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
@@ -37,7 +37,7 @@
 
 <script>
 import { deptList, deptSave, deptDelete , getUser } from '../../api/userMG'
-import {ArticleContent, ArticleList, ArticleSave, ArticleDelete, InboxList, EmailList} from '../../api/basisMG.js'
+import {ArticleContent, ArticleList, ArticleSave, ArticleDelete, SentList, EmailList} from '../../api/basisMG.js'
 import Pagination from '../../components/Pagination'
 import editor from '../../components/RichTextEditor.vue'
 
@@ -133,6 +133,7 @@ export default {
     getdata(parameter) {
       this.loading = true
 
+
       if (this.$globle.EMAILS == 0) {
         /**
          * 获取用户邮箱
@@ -143,7 +144,7 @@ export default {
             this.$globle.setEmails(res.data)
             
             
-            InboxList(this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress)
+            SentList(this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress)
               .then(res => {
                 this.loading = false
                 if (res.code == 200) {
@@ -161,7 +162,7 @@ export default {
               })
               .catch(err => {
                 this.loading = false
-                this.$message.error('菜单加载失败，请稍后再试！')
+                this.$message.error('加载失败，请稍后再试！')
               })
 
           } else {
@@ -169,7 +170,7 @@ export default {
           }
         })
       } else {
-        InboxList(this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress)
+        SentList(this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress)
           .then(res => {
             this.loading = false
             if (res.code == 200) {

@@ -1,7 +1,7 @@
 <template>
   <div class="editor-page">
     <!-- 图片上传组件辅助-->
-    <el-upload
+    <!-- <el-upload
       class="avatar-uploader"
       :action="serverUrl"
       name="file"
@@ -11,7 +11,7 @@
       :on-success="uploadSuccess"
       :on-error="uploadError"
       :before-upload="beforeUpload"
-    ></el-upload>
+    ></el-upload> -->
 
     <quill-editor
       class="editor"
@@ -40,7 +40,7 @@ const toolbarOptions = [
   [{ font: [] }], // 字体种类
   [{ align: [] }], // 对齐方式
   ["clean"], // 清除文本格式
-  ['link', 'image'], // 链接、图片
+  // ['link', 'image'], // 链接、图片
 ];
 
 import { quillEditor } from "vue-quill-editor";
@@ -159,35 +159,9 @@ export default {
       return this.uploadData.articleNo;
     },
     // 获得富文本内容
-    getContent(uid, aid) {
+    getContent() {
       // HTML 文本
-      const htmlText = this.content;
-
-      // 创建一个临时 div 元素
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = htmlText;
-
-      // 获取所有的 img 标签
-      const imgTags = tempDiv.getElementsByTagName('img');
-
-      // 遍历每个 img 标签并替换 src 内容
-      for (let i = 0; i < imgTags.length; i++) {
-        const src = imgTags[i].src;
-        if (src.indexOf("/api/file/viewIamge/") != -1) {
-          continue
-        }
-        const parts = src.split('/'); // 通过斜杠切割 src
-        const lastIndex = parts.length - 1;
-        const filename = parts[lastIndex];
-        const index = filename.split('-')[1]; // 提取序号部分
-        const newSrc = `/api/file/viewIamge/${uid}/${aid}/${index}`; // 新的 src
-
-
-        imgTags[i].src = newSrc;
-      }
-
-      // 返回处理后的 HTML 文本
-      return tempDiv.innerHTML;
+      return this.content;
     },
     // 添加文本内容
     setContent(content) {

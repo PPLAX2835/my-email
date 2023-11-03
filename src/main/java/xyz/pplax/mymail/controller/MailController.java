@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class MailController {
         } else {
             Email email1 = emails.get(0);
             MailMessage mailMessage = new MailMessage();
-            mailMessage.setProtocol(EmailConstants.QQ_EMAIL_SEND_PROTOCOL);
+            mailMessage.setProtocol(EmailConstants.QQ_EMAIL_SENT_PROTOCOL);
             mailMessage.setEmailAddress(emailAddress);
             mailMessage.setEmailPassword(email1.getEmailPassword());
 
@@ -108,27 +109,27 @@ public class MailController {
         } else {
             Email email1 = emails.get(0);
             MailMessage mailMessage = new MailMessage();
-            mailMessage.setProtocol(EmailConstants.QQ_EMAIL_SEND_PROTOCOL);
+            mailMessage.setProtocol(EmailConstants.QQ_EMAIL_SENT_PROTOCOL);
             mailMessage.setEmailAddress(emailAddress);
             mailMessage.setEmailPassword(email1.getEmailPassword());
 
             String suffix = emailAddress.substring(emailAddress.indexOf('@'), emailAddress.length());
             switch (suffix) {
                 case EmailConstants.QQ_EMAIL_SUFFIX:
-                    mailMessage.setHost(EmailConstants.QQ_EMAIL_SEND_HOST);
-                    mailMessage.setPort(EmailConstants.QQ_EMAIL_SEND_PORT);
+                    mailMessage.setHost(EmailConstants.QQ_EMAIL_SENT_HOST);
+                    mailMessage.setPort(EmailConstants.QQ_EMAIL_SENT_PORT);
                     break;
                 case EmailConstants.ALIYUN_EMAIL_SUFFIX:
-                    mailMessage.setHost(EmailConstants.ALIYUN_EMAIL_SEND_HOST);
-                    mailMessage.setPort(EmailConstants.ALIYUN_EMAIL_SEND_PORT);
+                    mailMessage.setHost(EmailConstants.ALIYUN_EMAIL_SENT_HOST);
+                    mailMessage.setPort(EmailConstants.ALIYUN_EMAIL_SENT_PORT);
                     break;
                 case EmailConstants.SINA_EMAIL_SUFFIX:
-                    mailMessage.setHost(EmailConstants.SINA_EMAIL_SEND_HOST);
-                    mailMessage.setPort(EmailConstants.SINA_EMAIL_SEND_PORT);
+                    mailMessage.setHost(EmailConstants.SINA_EMAIL_SENT_HOST);
+                    mailMessage.setPort(EmailConstants.SINA_EMAIL_SENT_PORT);
                     break;
                 case EmailConstants.NETEASE_EMAIL_SUFFIX:
-                    mailMessage.setHost(EmailConstants.NETEASE_EMAIL_SEND_HOST);
-                    mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SEND_PORT);
+                    mailMessage.setHost(EmailConstants.NETEASE_EMAIL_SENT_HOST);
+                    mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SENT_PORT);
                     break;
             }
             return JSON.toJSONString(ResponseResult.success(mailService.getInBoxMessages(mailMessage, EmailConstants.SENT_MESSAGES_FOLDER, new Date(), 50)));
@@ -163,77 +164,57 @@ public class MailController {
         }
         inputStream.close();
     }
+
+
+
+    @PostMapping(value = "/send")
+    public String sendTextMail(MessageDto messageDto){
+
+        MailMessage mailMessage = new MailMessage();
+        mailMessage.setSenderEmailAddress(messageDto.getSenderEmailAddress());
+        mailMessage.setEmailAddress(messageDto.getSenderEmailAddress());
+        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
+        mailMessage.setReceiverEmailAddress(messageDto.getReceiverEmailAddress());
+        mailMessage.setSubject(messageDto.getSubject());
+        mailMessage.setText(messageDto.getContent());
+
+        String suffix = messageDto.getSenderEmailAddress().substring(messageDto.getSenderEmailAddress().indexOf('@'), messageDto.getSenderEmailAddress().length());
+        switch (suffix) {
+            case EmailConstants.QQ_EMAIL_SUFFIX:
+                mailMessage.setHost(EmailConstants.QQ_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.QQ_EMAIL_SEND_PORT);
+                break;
+            case EmailConstants.ALIYUN_EMAIL_SUFFIX:
+                mailMessage.setHost(EmailConstants.ALIYUN_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.ALIYUN_EMAIL_SEND_PORT);
+                break;
+            case EmailConstants.SINA_EMAIL_SUFFIX:
+                mailMessage.setHost(EmailConstants.SINA_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.SINA_EMAIL_SEND_PORT);
+                break;
+            case EmailConstants.NETEASE_EMAIL_SUFFIX:
+                mailMessage.setHost(EmailConstants.NETEASE_EMAIL_SEND_HOST);
+                mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SEND_PORT);
+                break;
+        }
+
+        try {
+            if (messageDto.isHasAttachment()) {
+
+                mailMessage.setAttachment(messageDto.getAttachment().getBytes());
+                mailService.sendMailMessage(mailMessage);
+            } else {
+                mailService.sendMailMessage(mailMessage);
+            }
+            return JSON.toJSONString(ResponseResult.success());
+        } catch (MessagingException | IOException e) {
+            return JSON.toJSONString(ResponseResult.error(e.getMessage()));
+        }
+
+    }
 }
 
 
-//    @PostMapping(value = "/send")
-//    public String sendTextMail(MessageDto messageDto){
-//        String senderEmail = messageDto.getSenderEmail();
-//
-//        String recipientEmail = messageDto.getRecipientEmail();
-//
-//        String subject = messageDto.getSubject();
-//
-//        String content = messageDto.getContent();
-//
-//        MultipartFile attachment = messageDto.getAttachment();
-//
-//        try {
-//            if (attachment != null) {
-//                byte[] attachmentBytes = attachment.getBytes();
-//                mailService.sendMailMessage(senderEmail, recipientEmail, subject, content, attachmentBytes, attachment.getOriginalFilename());
-//            } else {
-//                mailService.sendMailMessage(senderEmail, recipientEmail, subject, content, null, null);
-//            }
-//            return JSON.toJSONString(ResponseResult.success());
-//        } catch (IOException e) {
-//            return JSON.toJSONString(ResponseResult.error(e.getMessage()));
-//        }
-//    }
 
 
-    /**
-     * axios请求示例
-     *
-     *
-             <div  style="width: 270px;height: 150px;overflow: hidden">
-                     <el-upload
-                     action="string"
-                     :auto-upload="false" :on-change="testUpload"
-                     :show-file-list="false">
-                     <el-button>文件</el-button>
-                 </el-upload>
-             </div>
-     *
-     *
-     *
-     *   testUpload(file) {
-     *       const formData = new FormData();
-     *       formData.append('recipientEmail', '1470193239@qq.com');
-     *       formData.append('subject', '这是一条标题');
-     *       formData.append('content', "<p><img src='https://img-blog.csdnimg.cn/0aadf41df23145c79e7eb0e0b23b94f4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMTLnqIvluo_njL8=,size_20,color_FFFFFF,t_70,g_se,x_16' alt='在这里插入图片描述'><br> 收件邮件：<br> <img src='https://img-blog.csdnimg.cn/7b6c5581307c4976a7ea2c5bdf673bed.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMTLnqIvluo_njL8=,size_20,color_FFFFFF,t_70,g_se,x_16' alt='在这里插入图片描述'></p>");
-     *       formData.append('attachment', file.raw);
-     *
-     *       // formData.append('messageDtoJsonStr', '{"recipientEmail": "1454847115@qq.com","subject": "这是一条标题","content": "..."}')
-     *
-     *
-     *       console.log(file)
-     *
-     *       Axios.post('http://127.0.0.1:8080/api/messages/send', formData, {
-     *       headers: {
-     *           'Content-Type': 'multipart/form-data'
-     *       }
-     *       })
-     *       .then(response => {
-     *       console.log('Response:', response.data);
-     *       })
-     *       .catch(error => {
-     *       console.error('Error:', error);
-     *       });
-     *     }
-     *
-     *
-     *
-     *
-     *
-     */
+
