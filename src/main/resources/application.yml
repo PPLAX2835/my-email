@@ -1,7 +1,6 @@
 # 服务端口
 server:
   port: 8080
-
 spring:
   redis:
     database: 0
@@ -45,3 +44,10 @@ mybatis:
 logging:
   level:
     xyz.pplax.mymail.*.mapper: trace
+
+
+# 自定义参数
+pplax:
+  file:
+    savepath: G:\\tmp\\mymail\\
+

@@ -15,17 +15,40 @@ import xyz.pplax.mymail.model.resp.ResponseResult;
 import xyz.pplax.mymail.service.MailService;
 import xyz.pplax.mymail.service.MenuService;
 import xyz.pplax.mymail.service.UserService;
+import xyz.pplax.mymail.utils.ReciveOneMail;
 
-import javax.mail.MessagingException;
+import javax.mail.*;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 @SpringBootTest
 class MymailApplicationTests {
 
     @Autowired
     MailService mailService;
+
+    @Test
+    public void getMailMessageListTest() throws MessagingException {
+
+        MailMessage mailMessage = new MailMessage();
+        mailMessage.setProtocol("pop3");
+        mailMessage.setHost("imap.qq.com");
+        mailMessage.setEmailAddress("1458667357@qq.com");
+        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
+
+        List<MailMessage> messages = mailService.getMessages(mailMessage);
+
+
+        for (MailMessage mailMessage1 : messages) {
+            System.out.println(JSON.toJSONString(mailMessage1));
+        }
+
+
+    }
 
     @Test
     public void sentEmailTest() throws MessagingException {
