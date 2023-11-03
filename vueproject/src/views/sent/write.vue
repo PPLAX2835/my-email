@@ -33,7 +33,7 @@
                 <el-input size="small" v-model="editForm.subject" auto-complete="off" placeholder="请输入主题">
                 </el-input>
             </el-form-item>
-            <el-form-item>
+            <!-- <el-form-item>
                 <el-upload style="float: left;" v-model="editForm.attachment"
                     action="string"
                     :auto-upload="false" :on-change="selectAttachment"
@@ -41,7 +41,7 @@
                     <el-button>{{ editForm.attachmentFileName }}</el-button>
                 </el-upload>
                 <el-button v-if="editForm.hasAttachment" type="warning" @click="removeAttachment">删除附件</el-button>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item>
                 <editor style="height: 70vh" ref="myEditor"></editor>
             </el-form-item>
@@ -162,22 +162,37 @@ export default {
         upladForm.append('subject', this.editForm.subject);
         upladForm.append('content', this.editForm.content);
         upladForm.append('hasAttachment', this.editForm.hasAttachment);
-        upladForm.append('hasAttachment', this.editForm.hasAttachment);
-        upladForm.append('attachment', this.editForm.attachment);
-        upladForm.append('attachmentFileName', this.editForm.attachmentFileName);
+        // upladForm.append('hasAttachment', this.editForm.hasAttachment);
+        // upladForm.append('attachment', this.editForm.attachment);
+        // upladForm.append('attachmentFileName', this.editForm.attachmentFileName);
     
+        let that = this;
+
         Axios.post(
             '/api/messages/send',
             upladForm, 
             {headers: {'Content-Type': 'multipart/form-data'}}
         ).then(res => {
-            console.log(res)
+            if(res.data.code == 200) {
+                that.$message({
+                message: '发送成功',
+                type: 'success'
+                })
+
+                that.editForm = {
+                    senderEmailAddress: this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress,
+                    receiverEmailAddress: '',
+                    subject:'',
+                    hasAttachment: false,
+                    attachmentFileName: '选择附件',
+                    attachment: '',
+                    content: ''
+                }
+                editorComponent.setContent('')
+
+            }
         })
     
-    
-    
-    
-
 
     }
     

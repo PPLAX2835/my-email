@@ -199,15 +199,15 @@ public class MailController {
         }
 
         try {
-            if (messageDto.isHasAttachment()) {
-
-                mailMessage.setAttachment(messageDto.getAttachment().getBytes());
+//            if (messageDto.isHasAttachment()) {
+//
+//                mailMessage.setAttachment(messageDto.getAttachment().getBytes());
+//                mailService.sendMailMessage(mailMessage);
+//            } else {
                 mailService.sendMailMessage(mailMessage);
-            } else {
-                mailService.sendMailMessage(mailMessage);
-            }
+//            }
             return JSON.toJSONString(ResponseResult.success());
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             return JSON.toJSONString(ResponseResult.error(e.getMessage()));
         }
 
