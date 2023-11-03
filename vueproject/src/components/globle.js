@@ -1,5 +1,5 @@
 export default {
-    EMAILS: {},
+    EMAILS: [],
     CURRENT_EMAIL_INDEX: 0,
     setEmails(emails) {
         this.EMAILS = emails;

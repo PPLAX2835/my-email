@@ -155,28 +155,30 @@ export default {
     // 获取数据
     getData() {
 
-      /**
-       * 获取用户邮箱
-       */
-      EmailList().then(res => {
-        if (res.code == 200) {
-          // 放到全局变量
-          this.$globle.setEmails(res.data)
-          // 保存到当前变量
+      if (this.$globle.EMAILS == 0) {
+        /**
+         * 获取用户邮箱
+         */
+        EmailList().then(res => {
+          if (res.code == 200) {
+            // 放到全局变量
+            this.$globle.setEmails(res.data)
+            // 保存到当前变量
 
-          if (res.data.length != 0) {
-            this.emails = res.data
-            this.currentEmail = this.emails[0].emailAddress;
-            this.hasEmails = true;
+            if (res.data.length != 0) {
+              this.emails = res.data
+              this.currentEmail = this.emails[0].emailAddress;
+              this.hasEmails = true;
+            } else {
+              this.hasEmails = false;
+              this.addEmail()
+            }
+
           } else {
-            this.hasEmails = false;
-            this.addEmail()
+            this.user = res.data
           }
-
-        } else {
-          this.user = res.data
-        }
-      })
+        })
+      }
 
 
       getSelf().then(res => {

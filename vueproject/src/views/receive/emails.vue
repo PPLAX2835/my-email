@@ -9,138 +9,26 @@
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>收件箱</el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- 搜索筛选 -->
-    <el-form :inline="true" :model="formInline" class="user-search">
-      <el-form-item label="搜索：">
-        <el-input size="small" v-model="formInline.keyword" placeholder="输入关键词"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
-        <el-button size="small" type="danger" icon="el-icon-delete" @click="deleteArticle()">删除所选项</el-button>
-      </el-form-item>
-    </el-form>
     <!--列表-->
     <el-table size="small" :data="listData" highlight-current-row  @selection-change="selectChange" v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
-      <el-table-column align="center" type="selection" width="60">
+      <el-table-column sortable prop="senderEmailAddress" label="发件人" width="400">
       </el-table-column>
-      <el-table-column sortable prop="aid" label="文章id" width="100">
+      <el-table-column sortable prop="subject" label="标题" width="500">
       </el-table-column>
-      <el-table-column sortable prop="uid" label="作者id" width="100">
+      <el-table-column sortable prop="sentDate" label="接收时间" width="150">
+      </el-table-column>
+      
+      <el-table-column align="center" label="操作" min-width="100">
         <template slot-scope="scope">
-          <div class="uid" @click="viewAuthor(scope.$index, scope.row)">{{scope.row.uid}}</div>
-        </template>
-      </el-table-column>
-      <el-table-column sortable prop="title" label="标题" width="200">
-      </el-table-column>
-      <el-table-column sortable prop="summary" label="摘要" width="200">
-        <template slot-scope="scope">
-          <div class="summary" v-html="scope.row.summary" @click="viewDetail(scope.$index, scope.row)">
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column sortable prop="weight" label="权重" width="100">
-      </el-table-column>
-      <el-table-column sortable prop="status" label="状态" width="100">
-      </el-table-column>
-      <el-table-column sortable prop="category" label="类型" width="100">
-      </el-table-column>
-      <el-table-column sortable prop="views" label="浏览量" width="100">
-      </el-table-column>
-      <el-table-column sortable prop="likes" label="点赞数" width="100">
-      </el-table-column>
-      <el-table-column sortable prop="comments" label="评论数" width="100">
-      </el-table-column>
-      <el-table-column sortable prop="updatedAt" label="发布时间" width="200">
-        <template slot-scope="scope">
-          <div>{{scope.row.updatedAt|timestampToTime}}</div>
-        </template>
-      </el-table-column>
-      <el-table-column sortable prop="publishedAt" label="修改时间" width="200">
-        <template slot-scope="scope">
-          <div>{{scope.row.publishedAt|timestampToTime}}</div>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="操作" min-width="200">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="deleteArticle(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" @click="viewDetail(scope.$index, scope.row)">查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页组件 -->
-    <Pagination v-bind:child-msg="pageparm" @callFather="callFather"></Pagination>
-    <!-- 作者界面 -->
-   <el-dialog :title="author.name" :visible.sync="authorTableVisible" width="30%" @click="closeDialog">
-      <template>
-        <div>
-          <el-form>
-            <el-form-item label="uid">
-              <span>{{ author.uid }}</span>
-            </el-form-item>
-            <el-form-item label="地址">
-              <span>{{ author.address }}</span>
-            </el-form-item>
-            <el-form-item label="Email">
-              <span>{{ author.email }}</span>
-            </el-form-item>
-            <el-form-item label="性别">
-              <span>{{ formatGender(author.gender) }}</span>
-            </el-form-item>
-            <el-form-item label="电话">
-              <span>{{ author.phone }}</span>
-            </el-form-item>
-            <el-form-item label="最喜欢的音乐人">
-              <span>{{ author.favouriteMusician }}</span>
-            </el-form-item>
-          </el-form>
-        </div>
-      </template>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="closeDialog">关闭</el-button>
-      </div>
-    </el-dialog>
     <!-- 查看详情界面 -->
-    <el-dialog title="内容" :visible.sync="detailTableVisible" width="30%" @click="closeDialog">
+    <el-dialog title="内容" :visible.sync="detailTableVisible" width="80%" @click="closeDialog">
       <div class="article-content" v-html="content"></div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="closeDialog">关闭</el-button>
-      </div>
-    </el-dialog>
-    <!-- 编辑界面 -->
-    <el-dialog :title="editTitle" :visible.sync="editFormVisible" width="80%" @click="closeDialog">
-      <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="标题" prop="title">
-          <el-input size="small" v-model="editForm.title" auto-complete="off" placeholder="请输入标题"></el-input>
-        </el-form-item>
-        <el-form-item label="分类" prop="category">
-          <el-input size="small" v-model="editForm.category" auto-complete="off" placeholder="请输入文章分类"></el-input>
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select size="small" v-model="editForm.status" placeholder="请选择状态">
-            <el-option label="发布" value="publish"></el-option>
-            <el-option label="草稿" value="draft"></el-option>
-            <el-option label="删除" value="delete"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="权重" prop="weight">
-          <el-slider size="small" v-model="editForm.weight"></el-slider>
-        </el-form-item>
-        <el-form-item label="发布时间" prop="publishedAt" v-if="isPublishAtVisible">
-          <el-date-picker size="small" v-model="editForm.publishedAt" placeholder="请输入发布时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="修改时间" prop="updatedAt" v-if="!isPublishAtVisible">
-          <el-date-picker size="small" v-model="editForm.updatedAt" placeholder="请输入修改时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="内容" prop="content">
-            <editor ref="myEditor"></editor>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="closeDialog">取消</el-button>
-        <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">保存</el-button>
       </div>
     </el-dialog>
   </div>
@@ -148,7 +36,7 @@
 
 <script>
 import { deptList, deptSave, deptDelete , getUser } from '../../api/userMG'
-import {ArticleContent, ArticleList, ArticleSave, ArticleDelete} from '../../api/basisMG.js'
+import {ArticleContent, ArticleList, ArticleSave, ArticleDelete, InboxList, EmailList} from '../../api/basisMG.js'
 import Pagination from '../../components/Pagination'
 import editor from '../../components/RichTextEditor.vue'
 
@@ -177,6 +65,9 @@ export default {
         weight: '',
         articleNo: '',
         token: localStorage.getItem('logintoken')
+      },
+      getInboxForm: {
+        emailAddress: ''
       },
       // rules表单验证
       rules: {
@@ -238,38 +129,43 @@ export default {
     getdata(parameter) {
       this.loading = true
 
-      /***
-       * 调用接口
-       */
-      ArticleList(parameter)
-        .then(res => {
-          this.loading = false
-          if (res.success == false) {
-            this.$message({
-              type: 'info',
-              message: res.msg
-            })
-            if (res.operation === "toLogin") {
-              loginout()
-                .then(res => {
-                  setTimeout(() => {
-                    this.$store.commit('logout', 'false')
-                    this.$router.push({ path: '/login' })
-                  }, 1000)}
-                )
-            }
+
+      if (this.$globle.EMAILS == 0) {
+        /**
+         * 获取用户邮箱
+         */
+        EmailList().then(res => {
+          if (res.code == 200) {
+            // 放到全局变量
+            this.$globle.setEmails(res.data)
+            
+            
+            InboxList(this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress)
+              .then(res => {
+                this.loading = false
+                if (res.code == 200) {
+                  this.listData = res.data
+                  // 分页赋值
+                  this.pageparm.currentPage = this.formInline.page
+                  this.pageparm.pageSize = this.formInline.limit
+                  this.pageparm.total = res.count
+                } else {
+                  this.$message({
+                    type: 'info',
+                    message: res.message
+                  })
+                }
+              })
+              .catch(err => {
+                this.loading = false
+                this.$message.error('菜单加载失败，请稍后再试！')
+              })
+
           } else {
-            this.listData = res.data
-            // 分页赋值
-            this.pageparm.currentPage = this.formInline.page
-            this.pageparm.pageSize = this.formInline.limit
-            this.pageparm.total = res.count
+            this.user = res.data
           }
         })
-        .catch(err => {
-          this.loading = false
-          this.$message.error('菜单加载失败，请稍后再试！')
-        })
+      }
     },
     // 分页插件事件
     callFather(parm) {
@@ -390,13 +286,9 @@ export default {
     },
     //显示查看详情界面
     viewDetail: function(index, row) {
-      this.detailTableVisible = true
 
-      // 调用请求文章内容接口
-      ArticleContent({'aid': row.aid}).then(res => {
-        console.log(res)
-        this.content = res.data.content
-      })
+      this.detailTableVisible = true
+      this.content = row.text
     },
     //显示编辑界面
     handleEdit: function(index, row) {

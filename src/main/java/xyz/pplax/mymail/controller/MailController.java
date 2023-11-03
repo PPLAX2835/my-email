@@ -4,11 +4,20 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.dto.MessageDto;
+import xyz.pplax.mymail.model.entity.Email;
+import xyz.pplax.mymail.model.entity.User;
+import xyz.pplax.mymail.model.mail.MailMessage;
 import xyz.pplax.mymail.model.resp.ResponseResult;
+import xyz.pplax.mymail.service.EmailService;
 import xyz.pplax.mymail.service.MailService;
+import xyz.pplax.mymail.service.UserService;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -16,6 +25,54 @@ public class MailController {
 
     @Autowired
     MailService mailService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    EmailService emailService;
+
+    @GetMapping("inbox")
+    public String getInbox(@RequestParam("token") String token, @RequestParam("emailAddress") String emailAddress) throws MessagingException {
+
+        User user = userService.selectByToken(token);
+        Email email = new Email();
+        email.setUid(user.getUid());
+        email.setEmailAddress(emailAddress);
+        List<Email> emails = emailService.selectListSelective(email);
+
+        if (emails.size() == 0) {
+            return JSON.toJSONString(ResponseResult.error("参数错误"));
+        } else {
+            Email email1 = emails.get(0);
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.setProtocol("pop3");
+            mailMessage.setEmailAddress(emailAddress);
+            mailMessage.setEmailPassword(email1.getEmailPassword());
+
+            String suffix = emailAddress.substring(emailAddress.indexOf('@'), emailAddress.length());
+            switch (suffix) {
+                case EmailConstants.QQ_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.QQ_EMAIL_SEND_HOST);
+                    mailMessage.setPort(EmailConstants.QQ_EMAIL_SEND_PORT);
+                    break;
+                case EmailConstants.ALIYUN_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.ALIYUN_EMAIL_SEND_HOST);
+                    mailMessage.setPort(EmailConstants.ALIYUN_EMAIL_SEND_PORT);
+                    break;
+                case EmailConstants.SINA_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.SINA_EMAIL_SEND_HOST);
+                    mailMessage.setPort(EmailConstants.SINA_EMAIL_SEND_PORT);
+                    break;
+                case EmailConstants.NETEASE_EMAIL_SUFFIX:
+                    mailMessage.setHost(EmailConstants.NETEASE_EMAIL_SEND_HOST);
+                    mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SEND_PORT);
+                    break;
+            }
+            return JSON.toJSONString(ResponseResult.success(mailService.getMessages(mailMessage)));
+
+        }
+    }
+}
+
 
 //    @PostMapping(value = "/send")
 //    public String sendTextMail(MessageDto messageDto){
@@ -88,6 +145,3 @@ public class MailController {
      *
      *
      */
-
-
-}
