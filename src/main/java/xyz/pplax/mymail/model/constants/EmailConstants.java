@@ -2,6 +2,9 @@ package xyz.pplax.mymail.model.constants;
 
 public class EmailConstants {
 
+    public static final String INBOX_FOLDER = "INBOX";
+    public static final String SENT_MESSAGES_FOLDER = "Sent Messages";
+
     /**
      * qq邮箱
      */

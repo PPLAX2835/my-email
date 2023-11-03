@@ -130,16 +130,16 @@ public class MailService {
      * @return
      * @throws MessagingException
      */
-    public List<MailMessage> getMessages(MailMessage mailMessage) throws MessagingException {
+    public List<MailMessage> getMessages(MailMessage mailMessage, String type) throws MessagingException {
         Properties props = System.getProperties();
-        props.put("mail.smtp.host", "smtp.163.com");
+        props.put("mail.smtp.host", mailMessage.getHost());
         props.put("mail.smtp.auth", "true");
         Session session = Session.getDefaultInstance(props, null);
         URLName urln = new URLName(mailMessage.getProtocol(), mailMessage.getHost(), 110, null,
                 mailMessage.getEmailAddress(), mailMessage.getEmailPassword());
         Store store = session.getStore(urln);
         store.connect();
-        Folder folder = store.getFolder("INBOX");
+        Folder folder = store.getFolder(type);
         folder.open(Folder.READ_ONLY);
         Message[] message = folder.getMessages();
         System.out.println("Messages's length: " + message.length);

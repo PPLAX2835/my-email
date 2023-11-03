@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.pplax.mymail.mapper.EmailMapper;
 import xyz.pplax.mymail.mapper.UserMapper;
+import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.entity.Email;
 import xyz.pplax.mymail.model.entity.Menu;
 import xyz.pplax.mymail.model.entity.User;
@@ -32,7 +33,7 @@ class MymailApplicationTests {
     MailService mailService;
 
     @Test
-    public void getMailMessageListTest() throws MessagingException {
+    public void getInboxMailMessageListTest() throws MessagingException {
 
         MailMessage mailMessage = new MailMessage();
         mailMessage.setProtocol("pop3");
@@ -40,15 +41,72 @@ class MymailApplicationTests {
         mailMessage.setEmailAddress("1458667357@qq.com");
         mailMessage.setEmailPassword("dvbviwakqsrvbadb");
 
-        List<MailMessage> messages = mailService.getMessages(mailMessage);
+        List<MailMessage> messages = mailService.getMessages(mailMessage, EmailConstants.INBOX_FOLDER);
 
 
         for (MailMessage mailMessage1 : messages) {
             System.out.println(JSON.toJSONString(mailMessage1));
         }
-
-
     }
+
+
+    @Test
+    public void getSentMessages() {
+        Properties props = new Properties(); // 参数配置
+        props.setProperty("mail.transport.protocol", "smtp"); // 使用的协议(JavaMail规范要求)
+        props.setProperty("mail.smtp.host", "smtp.qq.com"); // 发件人的邮箱的SMTP服务器地址
+        props.setProperty("mail.smtp.auth", "true"); // 需要请求认证
+        // PS:某些邮箱服务器要求SMTP连接需要使用SSL安全认证(为了提高安全性,邮箱支持SSL连接,也可以自己开启),
+        // 如果无法连接邮件服务器,仔细查看控制台打印的 log,如果有有类似"连接失败,要求 SSL安全连接"等错误,
+        // 开启 SSL安全连接
+        // SMTP服务器的端口(非 SSL连接的端口一般默认为 25,可以不添加,如果开启了SSL连接,
+        // 需要改为对应邮箱的SMTP服务器的端口,具体可查看对应邮箱服务的帮助,
+        // QQ邮箱的SMTP(SLL)端口为465或587
+        final String smtpPort = "465";
+        props.setProperty("mail.smtp.port", smtpPort);
+        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.setProperty("mail.smtp.socketFactory.fallback", "false");
+        props.setProperty("mail.smtp.socketFactory.port", smtpPort);
+        Session session = Session.getDefaultInstance(props);
+        session.setDebug(false);
+        try {
+            Store store = session.getStore("imap");
+            store.connect("smtp.qq.com", "1458667357@qq.com", "dvbviwakqsrvbadb");// change the user and password accordingly
+            Folder folder = store.getFolder("Sent Messages");
+//            Folder defaultFolder = store.getDefaultFolder();
+//            Folder[] allFolder = defaultFolder.list();
+            if (!folder.exists()) {
+                System.out.println("inbox not found");
+                System.exit(0);
+            }
+            folder.open(Folder.READ_ONLY);
+            Message[] messages = folder.getMessages();
+            for (Message message : messages) {
+                System.out.print(message.toString()+'\n');
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void getSentMessageMailMessageListTest() throws MessagingException {
+
+        MailMessage mailMessage = new MailMessage();
+        mailMessage.setProtocol("smtp");
+        mailMessage.setHost("smtp.qq.com");
+        mailMessage.setEmailAddress("1458667357@qq.com");
+        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
+
+        List<MailMessage> messages = mailService.getMessages(mailMessage, EmailConstants.SENT_MESSAGES_FOLDER);
+
+
+        for (MailMessage mailMessage1 : messages) {
+            System.out.println(JSON.toJSONString(mailMessage1));
+        }
+    }
+
 
     @Test
     public void sentEmailTest() throws MessagingException {

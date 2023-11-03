@@ -74,7 +74,7 @@ public class MailController {
                     mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SEND_PORT);
                     break;
             }
-            return JSON.toJSONString(ResponseResult.success(mailService.getMessages(mailMessage)));
+            return JSON.toJSONString(ResponseResult.success(mailService.getMessages(mailMessage, EmailConstants.INBOX_FOLDER)));
 
         }
     }
