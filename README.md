@@ -96,7 +96,7 @@ services:
       - "6379:6379"
 ```
 
-Sentinel
+### Sentinel
 
 ```yaml
 version: '3'
@@ -112,7 +112,7 @@ services:
       - "8858:8858"
 ```
 
-MySQL
+### MySQL
 
 ```yaml
 version: '3'
