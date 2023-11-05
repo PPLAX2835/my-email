@@ -37,13 +37,13 @@ public class TokenCheckFilter implements Filter {
         String token = httpRequest.getHeader("token");
         if (token == null) {
             // 没有token，登录状态有问题
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/error/parameter");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/api/error/parameter");
             dispatcher.forward(request, response);
         } else {
             User user = userService.selectByToken(token);
             if (user == null) {
                 // 执登录状态无效或过期
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/error/expired");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/api/error/expired");
                 dispatcher.forward(request, response);
             } else {
                 chain.doFilter(request, response);
