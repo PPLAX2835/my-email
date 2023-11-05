@@ -17,7 +17,7 @@
             </el-form-item>
 
 
-            <el-form-item label="邮箱" prop="title">
+            <el-form-item label="收件人邮箱" prop="title">
                 <el-input size="small" v-model="editForm.receiverEmailAddress" auto-complete="off" @blur="addEmailSuffix" placeholder="请输入邮箱">
                     <el-select v-model="emailType" slot="append" @change="addEmailSuffix" placeholder="请选择">
                         <el-option
@@ -47,7 +47,7 @@
             </el-form-item>
             
             <div style="margin-top: 15%;">
-                <el-button @click="submitEmail">发送邮件</el-button>
+                <el-button :loading="loading" @click="submitEmail">发送邮件</el-button>
             </div>
 
 
@@ -150,52 +150,71 @@ export default {
         this.editForm.attachmentFileName = '选择附件';
     },
     submitEmail() {
-        const editorComponent = this.$refs.myEditor;
-        this.editForm.content = editorComponent.getContent();
+      this.loading = true;
 
-     
+      
+      const editorComponent = this.$refs.myEditor;
+      this.editForm.content = editorComponent.getContent();
 
-        const upladForm = new FormData();
-        upladForm.append('senderEmailAddress', this.editForm.senderEmailAddress);
-        upladForm.append('receiverEmailAddress', this.editForm.receiverEmailAddress);
-        upladForm.append('subject', this.editForm.subject);
-        upladForm.append('content', this.editForm.content);
-        upladForm.append('hasAttachment', this.editForm.hasAttachment);
-        upladForm.append('hasAttachment', this.editForm.hasAttachment);
-        upladForm.append('attachment', this.editForm.attachment);
-        upladForm.append('attachmentFileName', this.editForm.attachmentFileName);
+      if(this.editForm.senderEmailAddress == '' || this.editForm.receiverEmailAddress == '' || this.editForm.subject == '' || this.editForm.content == '') {
+        this.loading = false;
+        return ;
+      } else {
+        var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+        if (!reg.test(this.editForm.receiverEmailAddress)) {
+          this.$message({
+              message: '收件人邮箱不正确',
+              type: 'error'
+          })
+          this.loading = false;
+          return;
+        }
+      }
     
-        let that = this;
 
-        Axios.post(
-            '/api/messages/send',
-            upladForm, 
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-                'token': localStorage.getItem('logintoken')
+      const upladForm = new FormData();
+      upladForm.append('senderEmailAddress', this.editForm.senderEmailAddress);
+      upladForm.append('receiverEmailAddress', this.editForm.receiverEmailAddress);
+      upladForm.append('subject', this.editForm.subject);
+      upladForm.append('content', this.editForm.content);
+      upladForm.append('hasAttachment', this.editForm.hasAttachment);
+      upladForm.append('hasAttachment', this.editForm.hasAttachment);
+      upladForm.append('attachment', this.editForm.attachment);
+      upladForm.append('attachmentFileName', this.editForm.attachmentFileName);
+  
+      let that = this;
+
+      Axios.post(
+          '/api/messages/send',
+          upladForm, 
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'token': localStorage.getItem('logintoken')
+            }
+          }
+      ).then(res => {
+        this.loading = false;
+
+          if(res.data.code == 200) {
+              that.$message({
+              message: '发送成功',
+              type: 'success'
+              })
+
+              that.editForm = {
+                  senderEmailAddress: this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress,
+                  receiverEmailAddress: '',
+                  subject:'',
+                  hasAttachment: false,
+                  attachmentFileName: '选择附件',
+                  attachment: '',
+                  content: ''
               }
-            }
-        ).then(res => {
-            if(res.data.code == 200) {
-                that.$message({
-                message: '发送成功',
-                type: 'success'
-                })
+              editorComponent.setContent('')
 
-                that.editForm = {
-                    senderEmailAddress: this.$globle.EMAILS[this.$globle.CURRENT_EMAIL_INDEX].emailAddress,
-                    receiverEmailAddress: '',
-                    subject:'',
-                    hasAttachment: false,
-                    attachmentFileName: '选择附件',
-                    attachment: '',
-                    content: ''
-                }
-                editorComponent.setContent('')
-
-            }
-        })
+          }
+      })
     
 
     }
