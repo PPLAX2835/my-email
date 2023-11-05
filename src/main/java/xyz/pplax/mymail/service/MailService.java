@@ -95,8 +95,13 @@ public class MailService {
         javaMailSender.setPassword(mailMessage.getEmailPassword());
         javaMailSender.setDefaultEncoding("UTF-8");
         Properties properties = new Properties();
-        properties.setProperty("mail.smtp.ssl.enable", "false");
-        properties.setProperty("mail.smtp.ssl.required", "false");
+
+        properties.setProperty("mail.imap.ssl.enable", "true"); // Use SSL for IMAP
+        properties.setProperty("mail.imap.auth", "true"); // Enable authentication for IMAP
+        properties.setProperty("mail.imap.starttls.enable", "true"); // Enable STARTTLS
+        properties.setProperty("mail.imap.ssl.trust", "*"); // Trust all certificates
+
+
         javaMailSender.setJavaMailProperties(properties);
 
 
