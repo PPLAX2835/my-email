@@ -1,11 +1,13 @@
 package xyz.pplax.mymail.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import com.wf.captcha.GifCaptcha;
 import com.wf.captcha.utils.CaptchaUtil;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import xyz.pplax.mymail.component.handler.CommonBlockHandler;
 import xyz.pplax.mymail.model.dto.LoginDto;
 import xyz.pplax.mymail.model.entity.User;
 import xyz.pplax.mymail.model.resp.ResponseResult;
@@ -43,6 +45,7 @@ public class AuthController {
      * @throws Exception
      */
     @PostMapping("/login")
+    @SentinelResource(value = "my-mail-api-resource", blockHandlerClass = CommonBlockHandler.class, blockHandler = "handle")
     public String login(HttpServletRequest request, LoginDto loginDto) throws Exception {
         // 从session中获取验证码
         HttpSession session = request.getSession();

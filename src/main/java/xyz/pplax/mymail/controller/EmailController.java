@@ -1,6 +1,7 @@
 package xyz.pplax.mymail.controller;
 
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xyz.pplax.mymail.component.handler.CommonBlockHandler;
 import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.dto.AddEmailDto;
 import xyz.pplax.mymail.model.entity.Email;
@@ -46,6 +48,7 @@ public class EmailController {
      * @return
      */
     @GetMapping("/emails")
+    @SentinelResource(value = "my-mail-api-resource", blockHandlerClass = CommonBlockHandler.class, blockHandler = "handle")
     public String getEmails(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         User user = userService.selectByToken(token);
@@ -67,6 +70,7 @@ public class EmailController {
      * @throws GeneralSecurityException
      */
     @PostMapping("/add")
+    @SentinelResource(value = "my-mail-api-resource", blockHandlerClass = CommonBlockHandler.class, blockHandler = "handle")
     public String addEmail(HttpServletRequest httpServletRequest, AddEmailDto addEmailDto) throws GeneralSecurityException {
         String token = httpServletRequest.getHeader("token");
         User user = userService.selectByToken(token);

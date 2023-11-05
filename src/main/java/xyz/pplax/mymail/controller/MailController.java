@@ -1,5 +1,6 @@
 package xyz.pplax.mymail.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
+import xyz.pplax.mymail.component.handler.CommonBlockHandler;
 import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.dto.MessageDto;
 import xyz.pplax.mymail.model.entity.Email;
@@ -59,6 +61,7 @@ public class MailController {
      * @throws MessagingException
      */
     @GetMapping("inbox")
+    @SentinelResource(value = "my-mail-api-resource", blockHandlerClass = CommonBlockHandler.class, blockHandler = "handle")
     public String getInbox(@RequestParam("token") String token, @RequestParam("emailAddress") String emailAddress) throws MessagingException {
 
         User user = userService.selectByToken(token);
@@ -108,6 +111,7 @@ public class MailController {
      * @throws MessagingException
      */
     @GetMapping("sent")
+    @SentinelResource(value = "my-mail-api-resource", blockHandlerClass = CommonBlockHandler.class, blockHandler = "handle")
     public String getSent(@RequestParam("token") String token, @RequestParam("emailAddress") String emailAddress) throws MessagingException {
 
         User user = userService.selectByToken(token);
@@ -157,6 +161,7 @@ public class MailController {
      * @throws IOException
      */
     @GetMapping("/attachment")
+    @SentinelResource(value = "my-mail-api-resource", blockHandlerClass = CommonBlockHandler.class, blockHandler = "handle")
     public void downloadAttachment(HttpServletResponse httpServletResponse, @RequestParam("fileName") String fileName) throws IOException {
 
         System.out.println(fileName);
@@ -186,6 +191,7 @@ public class MailController {
      * @return
      */
     @PostMapping(value = "/send")
+    @SentinelResource(value = "my-mail-api-resource", blockHandlerClass = CommonBlockHandler.class, blockHandler = "handle")
     public String sendTextMail(HttpServletRequest httpServletRequest, @RequestParam(value = "attachment", required = false) MultipartFile attachment, MessageDto messageDto){
 
         String token = httpServletRequest.getHeader("token");
