@@ -6,6 +6,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.pplax.mymail.mapper.UserMapper;
+import xyz.pplax.mymail.model.constants.RedisKeyConstants;
 import xyz.pplax.mymail.model.entity.User;
 import xyz.pplax.mymail.utils.RedisOperator;
 import xyz.pplax.mymail.utils.TokenUtils;
@@ -53,15 +54,20 @@ public class UserService {
             password = (String) claims.get("password");
 
             // 从缓存中移除
-            redisOperator.del(username);
+            redisOperator.del(RedisKeyConstants.USER_INFO_PREFIX + username);
         }
 
         // 先从缓存中查询，如果查询不到就从数据库中查
-        String userJsonStr = redisOperator.get(username);
+        String userJsonStr = redisOperator.get(RedisKeyConstants.USER_INFO_PREFIX + username);
         if (!userJsonStr.isEmpty()) {
             return JSON.parseObject(userJsonStr, User.class);
         } else {
-            return userMapper.selectByUsernameAndPassword(username, password);
+            User user = userMapper.selectByUsernameAndPassword(username, password);
+            // 存到缓存中
+            if (user != null) {
+                redisOperator.set(RedisKeyConstants.USER_INFO_PREFIX + user.getUsername(), JSON.toJSONString(user));
+            }
+            return user;
         }
     }
 

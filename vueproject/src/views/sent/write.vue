@@ -213,6 +213,11 @@ export default {
               }
               editorComponent.setContent('')
 
+          } else {
+            that.$message({
+              message: res.data.data,
+              type: 'error'
+              })
           }
       })
     

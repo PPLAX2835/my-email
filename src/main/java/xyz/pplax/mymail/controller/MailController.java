@@ -10,16 +10,20 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import xyz.pplax.mymail.component.handler.CommonBlockHandler;
 import xyz.pplax.mymail.model.constants.EmailConstants;
+import xyz.pplax.mymail.model.constants.RedisKeyConstants;
 import xyz.pplax.mymail.model.dto.MessageDto;
 import xyz.pplax.mymail.model.entity.Email;
 import xyz.pplax.mymail.model.entity.User;
 import xyz.pplax.mymail.model.mail.MailMessage;
+import xyz.pplax.mymail.model.resp.ResponseCode;
 import xyz.pplax.mymail.model.resp.ResponseResult;
 import xyz.pplax.mymail.service.EmailService;
 import xyz.pplax.mymail.service.MailService;
 import xyz.pplax.mymail.service.UserService;
 
 import org.thymeleaf.context.Context;
+import xyz.pplax.mymail.utils.RedisOperator;
+
 import javax.mail.MessagingException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +50,8 @@ public class MailController {
     private UserService userService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private RedisOperator redisOperator;
 
     private final TemplateEngine templateEngine;
     @Autowired
@@ -204,17 +210,47 @@ public class MailController {
             return JSON.toJSONString(ResponseResult.error("参数错误"));
         }
 
+
+        // 检查发送方和接收方的收发次数，防止恶意攻击，不管有没有都要加一
+        String sendCountStr = redisOperator.get(RedisKeyConstants.EMAIL_SEND_COUNT_PREFIX + messageDto.getSenderEmailAddress());
+        String receiveCountStr = redisOperator.get(RedisKeyConstants.EMAIL_RECEIVE_COUNT_PREFIX + messageDto.getReceiverEmailAddress());
+        // 处理发送方
+        if (sendCountStr != null) {
+            int sendCount = Integer.parseInt(sendCountStr);
+            redisOperator.set(RedisKeyConstants.EMAIL_SEND_COUNT_PREFIX + messageDto.getSenderEmailAddress(), String.valueOf(sendCount + 1));
+            // 先限制20次吧
+            if (sendCount >= 20) {
+                return JSON.toJSONString(ResponseResult.error(ResponseCode.OPERATION_ERROR, "使用的邮件发送太频繁"));
+            }
+        } else {
+            redisOperator.set(RedisKeyConstants.EMAIL_SEND_COUNT_PREFIX + messageDto.getSenderEmailAddress(), "1");
+        }
+        // 处理接收方
+        if (receiveCountStr != null) {
+            int receiveCount = Integer.parseInt(receiveCountStr);
+            redisOperator.set(RedisKeyConstants.EMAIL_RECEIVE_COUNT_PREFIX + messageDto.getReceiverEmailAddress(), String.valueOf(receiveCount + 1));
+            // 先限制50次吧
+            if (receiveCount >= 50) {
+                return JSON.toJSONString(ResponseResult.error(ResponseCode.OPERATION_ERROR, "怀疑接收方被攻击了，请暂停发送"));
+            }
+        } else {
+            redisOperator.set(RedisKeyConstants.EMAIL_RECEIVE_COUNT_PREFIX + messageDto.getReceiverEmailAddress(), "1");
+        }
+
+
+        // 封装参数
         MailMessage mailMessage = new MailMessage();
         mailMessage.setSenderEmailAddress(messageDto.getSenderEmailAddress());
         mailMessage.setEmailAddress(messageDto.getSenderEmailAddress());
         mailMessage.setEmailPassword(emails.get(0).getEmailPassword());
         mailMessage.setReceiverEmailAddress(messageDto.getReceiverEmailAddress());
         mailMessage.setSubject(messageDto.getSubject());
-
+        // 转化成html页面
         Context context = new Context();
         context.setVariable("emailContent", messageDto.getContent());
         mailMessage.setText(templateEngine.process("mail", context));
 
+        // 根据邮箱后缀设置参数
         String suffix = messageDto.getSenderEmailAddress().substring(messageDto.getSenderEmailAddress().indexOf('@'), messageDto.getSenderEmailAddress().length());
         switch (suffix) {
             case EmailConstants.QQ_EMAIL_SUFFIX:
@@ -235,6 +271,7 @@ public class MailController {
                 break;
         }
 
+        // 发送邮件
         try {
             if (messageDto.isHasAttachment()) {
 

@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import xyz.pplax.mymail.component.handler.CommonBlockHandler;
+import xyz.pplax.mymail.model.constants.RedisKeyConstants;
 import xyz.pplax.mymail.model.dto.LoginDto;
 import xyz.pplax.mymail.model.entity.User;
 import xyz.pplax.mymail.model.resp.ResponseResult;
@@ -73,7 +74,7 @@ public class AuthController {
                 // 验证码正确
                 token = TokenUtils.generateToken(loginDto.getUsername(), text);
                 // 存redis
-                redisOperator.set(loginDto.getUsername(), JSON.toJSONString(user));
+                redisOperator.set(RedisKeyConstants.USER_INFO_PREFIX + loginDto.getUsername(), JSON.toJSONString(user));
                 flag = true;
             } else {
                 // 验证码错误
@@ -103,7 +104,7 @@ public class AuthController {
         try {
             // 从token中取出user，将缓存中的移除
             User user = userService.selectByToken(token);
-            redisOperator.del(user.getUsername());
+            redisOperator.del(RedisKeyConstants.USER_INFO_PREFIX + user.getUsername());
             return JSON.toJSONString(ResponseResult.success());
         } catch (Exception e) {
             return JSON.toJSONString(ResponseResult.error(e.getMessage()));
