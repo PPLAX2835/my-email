@@ -190,7 +190,7 @@ insert into `menu` (menu_id, icon, name, url, parent_menu_id) values (1, '', '�
 
 ```
 
-### 前端
+## 前端
 
 cd到`vueproject`​目录下
 
