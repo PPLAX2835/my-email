@@ -100,6 +100,7 @@ public class MailService {
         properties.setProperty("mail.imap.auth", "true"); // Enable authentication for IMAP
         properties.setProperty("mail.imap.starttls.enable", "true"); // Enable STARTTLS
         properties.setProperty("mail.imap.ssl.trust", "*"); // Trust all certificates
+//        properties.setProperty("mail.debug", "true");       // enable debug
 
 
         javaMailSender.setJavaMailProperties(properties);
