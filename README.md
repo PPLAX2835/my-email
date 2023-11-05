@@ -35,19 +35,11 @@
 
 ## 环境
 
-Java 8
-
-MySQL 8.0.33
-
-Redis 7.0.5
-
-npm 6.14.16
-
-sentinel-dashboard:1.8.2
+`Java 8` `MySQL 8.0.33` `Redis 7.0.5` `npm 6.14.16` `sentinel-dashboard:1.8.2`
 
 ‍
 
-### 展示
+## 展示
 
 swagger: [http://localhost:8080/swagger-ui.html#/](http://localhost:8080/swagger-ui.html#/)
 
