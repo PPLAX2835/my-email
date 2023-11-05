@@ -1,6 +1,7 @@
 package xyz.pplax.mymail.controller;
 
 import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "菜单接口", tags = "MenuController", description = "获得菜单")
 public class MenuController {
 
     @Autowired

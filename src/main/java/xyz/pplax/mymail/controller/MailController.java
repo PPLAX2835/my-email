@@ -1,6 +1,7 @@
 package xyz.pplax.mymail.controller;
 
 import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/messages")
+@Api(value = "邮箱相关接口", tags = "MailController", description = "收发件箱查询、发送邮箱等")
 public class MailController {
 
     @Value("${pplax.file.savepath}")

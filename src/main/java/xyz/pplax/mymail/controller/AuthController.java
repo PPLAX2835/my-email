@@ -3,6 +3,7 @@ package xyz.pplax.mymail.controller;
 import com.alibaba.fastjson.JSON;
 import com.wf.captcha.GifCaptcha;
 import com.wf.captcha.utils.CaptchaUtil;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import xyz.pplax.mymail.model.dto.LoginDto;
@@ -25,6 +26,7 @@ import static xyz.pplax.mymail.utils.AESUtil.desEncrypt;
  */
 @RestController
 @RequestMapping("/api/auth")
+@Api(value = "认证相关接口", tags = "AuthController", description = "用户登录、登出等相关接口")
 public class AuthController {
 
     @Autowired

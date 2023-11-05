@@ -2,6 +2,7 @@ package xyz.pplax.mymail.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/email")
+@Api(value = "用户邮箱相关接口", tags = "EmailController", description = "用户邮箱的查询、添加等")
 public class EmailController {
 
     @Autowired
