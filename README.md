@@ -8,7 +8,7 @@
 
 ## 技术栈
 
-​`Spring Boot`​ `My Batis`​ `Redis`​ `MySQL`​ `Docker`​
+​`Spring Boot`​ `My Batis`​ `Swagger`​ `Thymeleaf`​ `Redis`​ `MySQL`​ `Docker`​
 
 ​`Vue`​ `Element-ui`​
 
@@ -27,6 +27,7 @@ npm 6.14.16
 ‍
 
 ### 展示
+swagger：http://localhost:8080/swagger-ui.html
 
 ​![image](assets/image-20231103205443-4anq3ca.png)​
 
