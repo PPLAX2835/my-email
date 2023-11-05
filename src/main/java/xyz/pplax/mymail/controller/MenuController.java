@@ -11,6 +11,9 @@ import xyz.pplax.mymail.service.MenuService;
 
 import java.util.List;
 
+/**
+ * 菜单controller
+ */
 @RestController
 @RequestMapping("/api")
 public class MenuController {

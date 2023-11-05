@@ -6,6 +6,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 
+/**
+ * 模板引擎配置
+ */
 @Configuration
 public class ThymeleafConfig {
 

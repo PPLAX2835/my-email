@@ -20,6 +20,9 @@ import java.io.IOException;
 
 import static xyz.pplax.mymail.utils.AESUtil.desEncrypt;
 
+/**
+ * 认证相关接口，用于登录、登出等
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

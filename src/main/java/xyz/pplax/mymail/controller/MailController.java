@@ -26,6 +26,9 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 邮件收发相关
+ */
 @RestController
 @RequestMapping("/api/messages")
 public class MailController {
@@ -173,7 +176,13 @@ public class MailController {
     }
 
 
-
+    /**
+     * 发送邮件
+     * @param httpServletRequest
+     * @param attachment
+     * @param messageDto
+     * @return
+     */
     @PostMapping(value = "/send")
     public String sendTextMail(HttpServletRequest httpServletRequest, @RequestParam(value = "attachment", required = false) MultipartFile attachment, MessageDto messageDto){
 

@@ -11,6 +11,9 @@ import xyz.pplax.mymail.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 用户controller，与用户信息有关
+ */
 @RestController
 @RequestMapping("/api/user")
 public class UserController {

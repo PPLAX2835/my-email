@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 用于检擦用户登录状态
+ */
 @Component
 public class TokenCheckFilter implements Filter {
 

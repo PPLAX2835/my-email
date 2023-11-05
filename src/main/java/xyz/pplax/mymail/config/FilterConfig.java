@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import xyz.pplax.mymail.filter.TokenCheckFilter;
 import xyz.pplax.mymail.service.UserService;
 
+/**
+ * 过滤器配置
+ */
 @Configuration
 public class FilterConfig {
 

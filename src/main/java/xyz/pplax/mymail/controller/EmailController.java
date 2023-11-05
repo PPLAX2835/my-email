@@ -24,6 +24,9 @@ import java.security.PublicKey;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * email相关，用于添加、删除邮箱等
+ */
 @RestController
 @RequestMapping("/api/email")
 public class EmailController {
@@ -54,6 +57,13 @@ public class EmailController {
         return JSON.toJSONString(ResponseResult.success(emails));
     }
 
+    /**
+     * 添加邮箱
+     * @param httpServletRequest
+     * @param addEmailDto
+     * @return
+     * @throws GeneralSecurityException
+     */
     @PostMapping("/add")
     public String addEmail(HttpServletRequest httpServletRequest, AddEmailDto addEmailDto) throws GeneralSecurityException {
         String token = httpServletRequest.getHeader("token");
