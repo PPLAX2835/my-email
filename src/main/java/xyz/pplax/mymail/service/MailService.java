@@ -20,6 +20,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
@@ -76,7 +77,7 @@ public class MailService {
         try {
             sendMailMessage(mailMessage);
             return true;
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException e) {
             return false;
         }
 
@@ -85,7 +86,7 @@ public class MailService {
     /**
      * 发送邮件
      */
-    public void sendMailMessage(MailMessage mailMessage) throws MessagingException {
+    public void sendMailMessage(MailMessage mailMessage) throws MessagingException, IOException {
 
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost(mailMessage.getHost());
@@ -94,7 +95,8 @@ public class MailService {
         javaMailSender.setPassword(mailMessage.getEmailPassword());
         javaMailSender.setDefaultEncoding("UTF-8");
         Properties properties = new Properties();
-        properties.setProperty("mail.smtp.auth", "true");
+        properties.setProperty("mail.smtp.ssl.enable", "false");
+        properties.setProperty("mail.smtp.ssl.required", "false");
         javaMailSender.setJavaMailProperties(properties);
 
 
@@ -116,7 +118,7 @@ public class MailService {
         // 添加附件
         if (mailMessage.getAttachment() != null) {
             // Attach the file
-            mimeMessageHelper.addAttachment(mailMessage.getAttachmentFileName(), new ByteArrayResource(mailMessage.getAttachment()));
+            mimeMessageHelper.addAttachment(mailMessage.getAttachmentFileName(), new ByteArrayResource(mailMessage.getAttachment().getBytes()), Objects.requireNonNull(mailMessage.getAttachment().getContentType()));
         }
 
         //发送邮件

@@ -168,12 +168,22 @@ public class MailController {
 
 
     @PostMapping(value = "/send")
-    public String sendTextMail(MessageDto messageDto){
+    public String sendTextMail(HttpServletRequest httpServletRequest, @RequestParam(value = "attachment", required = false) MultipartFile attachment, MessageDto messageDto){
+
+        String token = httpServletRequest.getHeader("token");
+        User user = userService.selectByToken(token);
+        Email record = new Email();
+        record.setUid(user.getUid());
+        record.setEmailAddress(messageDto.getSenderEmailAddress());
+        List<Email> emails = emailService.selectListSelective(record);
+        if (emails.size() == 0) {
+            return JSON.toJSONString(ResponseResult.error("参数错误"));
+        }
 
         MailMessage mailMessage = new MailMessage();
         mailMessage.setSenderEmailAddress(messageDto.getSenderEmailAddress());
         mailMessage.setEmailAddress(messageDto.getSenderEmailAddress());
-        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
+        mailMessage.setEmailPassword(emails.get(0).getEmailPassword());
         mailMessage.setReceiverEmailAddress(messageDto.getReceiverEmailAddress());
         mailMessage.setSubject(messageDto.getSubject());
         mailMessage.setText(messageDto.getContent());
@@ -199,15 +209,16 @@ public class MailController {
         }
 
         try {
-//            if (messageDto.isHasAttachment()) {
-//
-//                mailMessage.setAttachment(messageDto.getAttachment().getBytes());
-//                mailService.sendMailMessage(mailMessage);
-//            } else {
+            if (messageDto.isHasAttachment()) {
+
+                mailMessage.setAttachment(attachment);
+                mailMessage.setAttachmentFileName(messageDto.getAttachmentFileName());
                 mailService.sendMailMessage(mailMessage);
-//            }
+            } else {
+                mailService.sendMailMessage(mailMessage);
+            }
             return JSON.toJSONString(ResponseResult.success());
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException e) {
             return JSON.toJSONString(ResponseResult.error(e.getMessage()));
         }
 

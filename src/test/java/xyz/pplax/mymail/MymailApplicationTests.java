@@ -233,22 +233,22 @@ class MymailApplicationTests {
 //    }
 
 
-    @Test
-    public void sentEmailTest() throws MessagingException {
-        MailMessage mailMessage = new MailMessage();
-
-        mailMessage.setPort("587");
-        mailMessage.setHost("smtp.qq.com");
-        mailMessage.setEmailAddress("1458667357@qq.com");
-        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
-        mailMessage.setSubject("这是一条标题");
-        mailMessage.setText("这是一条内容");
-        mailMessage.setProtocol("SMTP");
-        mailMessage.setReceiverEmailAddress("lax1458667357@163.com");
-
-        mailService.sendMailMessage(mailMessage);
-
-    }
+//    @Test
+//    public void sentEmailTest() throws MessagingException {
+//        MailMessage mailMessage = new MailMessage();
+//
+//        mailMessage.setPort("587");
+//        mailMessage.setHost("smtp.qq.com");
+//        mailMessage.setEmailAddress("1458667357@qq.com");
+//        mailMessage.setEmailPassword("dvbviwakqsrvbadb");
+//        mailMessage.setSubject("这是一条标题");
+//        mailMessage.setText("这是一条内容");
+//        mailMessage.setProtocol("SMTP");
+//        mailMessage.setReceiverEmailAddress("lax1458667357@163.com");
+//
+//        mailService.sendMailMessage(mailMessage);
+//
+//    }
 
 //    @Test
 //    void sentEmailTest() {

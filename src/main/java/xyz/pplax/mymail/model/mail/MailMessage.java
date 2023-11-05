@@ -1,6 +1,7 @@
 package xyz.pplax.mymail.model.mail;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class MailMessage {
@@ -31,7 +32,7 @@ public class MailMessage {
 
     private boolean hasAttachment;
 
-    private byte[] attachment;
+    private MultipartFile attachment;
 
     private String attachmentFileName;
 
