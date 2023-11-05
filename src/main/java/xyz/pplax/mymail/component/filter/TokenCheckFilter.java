@@ -1,4 +1,4 @@
-package xyz.pplax.mymail.filter;
+package xyz.pplax.mymail.component.filter;
 
 import org.springframework.stereotype.Component;
 import xyz.pplax.mymail.model.entity.User;

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import xyz.pplax.mymail.filter.TokenCheckFilter;
+import xyz.pplax.mymail.component.filter.TokenCheckFilter;
 import xyz.pplax.mymail.service.UserService;
 
 @Configuration

@@ -39,7 +39,7 @@
         </el-form-item>
 
         <el-form-item label="授权码" prop="title">
-          <el-input size="small" v-model="editForm.emailPassword" auto-complete="off" @blur="addEmailSuffix" placeholder="请输入授权码"></el-input>
+          <el-input size="small" type="password" v-model="editForm.emailPassword" auto-complete="off" @blur="addEmailSuffix" placeholder="请输入授权码"></el-input>
         </el-form-item>
 
 
