@@ -104,7 +104,7 @@ public class MailController {
                     mailMessage.setPort(EmailConstants.NETEASE_EMAIL_RECEIVE_PORT);
                     break;
             }
-            return JSON.toJSONString(ResponseResult.success(mailService.getInBoxMessages(mailMessage, EmailConstants.INBOX_FOLDER, new Date(), 50)));
+            return JSON.toJSONString(ResponseResult.success(mailService.getMessages(mailMessage, EmailConstants.INBOX_FOLDER, new Date(), 50)));
 
         }
     }
@@ -154,7 +154,7 @@ public class MailController {
                     mailMessage.setPort(EmailConstants.NETEASE_EMAIL_SENT_PORT);
                     break;
             }
-            return JSON.toJSONString(ResponseResult.success(mailService.getInBoxMessages(mailMessage, EmailConstants.SENT_MESSAGES_FOLDER, new Date(), 50)));
+            return JSON.toJSONString(ResponseResult.success(mailService.getMessages(mailMessage, EmailConstants.SENT_MESSAGES_FOLDER, new Date(), 50)));
 
         }
     }

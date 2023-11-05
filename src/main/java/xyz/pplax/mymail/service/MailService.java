@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import xyz.pplax.mymail.mapper.EmailMapper;
 import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.mail.MailMessage;
@@ -41,24 +42,26 @@ public class MailService {
 
     /**
      * 检测邮件信息类
+     *
      * @param to
      * @param subject
      * @param text
      */
-    private void checkMail(String to,String subject,String text){
-        if(StringUtils.hasLength(to)){
+    private void checkMail(String to, String subject, String text) {
+        if (StringUtils.hasLength(to)) {
             throw new RuntimeException("邮件收信人不能为空");
         }
-        if(StringUtils.hasLength(subject)){
+        if (StringUtils.hasLength(subject)) {
             throw new RuntimeException("邮件主题不能为空");
         }
-        if(StringUtils.hasLength(text)){
+        if (StringUtils.hasLength(text)) {
             throw new RuntimeException("邮件内容不能为空");
         }
     }
 
     /**
      * 检查是否有效
+     *
      * @return
      * @throws GeneralSecurityException
      */
@@ -85,6 +88,9 @@ public class MailService {
 
     /**
      * 发送邮件
+     * 思来想去，发现这种参数定义方式非常恶劣，会对以后的代码复用带来很大威胁，以后得弃用了
+     *
+     * @deprecated
      */
     public void sendMailMessage(MailMessage mailMessage) throws MessagingException, IOException {
 
@@ -110,7 +116,7 @@ public class MailService {
          * 建立邮件
          */
         //true 代表支持复杂的类型
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(javaMailSender.createMimeMessage(),true);
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(javaMailSender.createMimeMessage(), true);
         //邮件发信人
         mimeMessageHelper.setFrom(mailMessage.getEmailAddress());
         //邮件收信人  1或多个
@@ -129,18 +135,39 @@ public class MailService {
 
         //发送邮件
         javaMailSender.send(mimeMessageHelper.getMimeMessage());
-        System.out.println("发送邮件成功："+mailMessage.getEmailAddress()+"->"+mailMessage.getReceiverEmailAddress());
+        System.out.println("发送邮件成功：" + mailMessage.getEmailAddress() + "->" + mailMessage.getReceiverEmailAddress());
 
+    }
+
+    /**
+     * 发送邮件方法重载
+     */
+    public void sendMailMessage(String host, String port, String from, String password, String to, String subject, String content, MultipartFile attachment) throws MessagingException, IOException {
+
+        MailMessage mailMessage = new MailMessage();
+        mailMessage.setHost(host);
+        mailMessage.setPort(port);
+        mailMessage.setEmailAddress(from);
+        mailMessage.setEmailPassword(password);
+        mailMessage.setReceiverEmailAddress(to);
+        mailMessage.setSubject(subject);
+        mailMessage.setText(content);
+        mailMessage.setAttachment(attachment);
+
+        sendMailMessage(mailMessage);
     }
 
 
     /**
-     * 获得收件箱的列表
+     * 获得收、发件箱的列表，是收是发取决于参数
+     * 这个也得逐渐启用
+     *
      * @param mailMessage
      * @return
      * @throws MessagingException
+     * @deprecated
      */
-    public List<MailMessage> getInBoxMessages(MailMessage mailMessage, String type, Date beginDate, int numberOfDays) throws MessagingException {
+    public List<MailMessage> getMessages(MailMessage mailMessage, String type, Date beginDate, int numberOfDays) throws MessagingException {
 
         Properties props = new Properties(); // 参数配置
         props.setProperty("mail.store.protocol", mailMessage.getProtocol()); // 使用IMAP协议进行邮件接收
@@ -208,6 +235,18 @@ public class MailService {
 
 
         return mailMessageList;
+    }
+
+
+    public List<MailMessage> getMessages(String protocol, String host, String port, String emailAddress, String emailPassword, String type, Date beginDate, int numberOfDays) throws MessagingException {
+        MailMessage mailMessage = new MailMessage();
+        mailMessage.setPort(port);
+        mailMessage.setProtocol(protocol);
+        mailMessage.setHost(host);
+        mailMessage.setEmailAddress(emailAddress);
+        mailMessage.setEmailPassword(emailPassword);
+
+        return getMessages(mailMessage, type, beginDate, numberOfDays);
     }
 
 }
