@@ -139,7 +139,7 @@ services:
 
 ‍
 
-### 数据库准备
+## 数据库准备
 
 ```sql
 drop database if exists myemail_db;
