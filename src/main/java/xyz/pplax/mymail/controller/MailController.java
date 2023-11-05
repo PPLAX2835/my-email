@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.TemplateEngine;
 import xyz.pplax.mymail.model.constants.EmailConstants;
 import xyz.pplax.mymail.model.dto.MessageDto;
 import xyz.pplax.mymail.model.entity.Email;
@@ -15,13 +16,13 @@ import xyz.pplax.mymail.service.EmailService;
 import xyz.pplax.mymail.service.MailService;
 import xyz.pplax.mymail.service.UserService;
 
+import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +39,12 @@ public class MailController {
     private UserService userService;
     @Autowired
     private EmailService emailService;
+
+    private final TemplateEngine templateEngine;
+    @Autowired
+    public MailController(TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
+    }
 
     /**
      * 获得收件箱
@@ -186,7 +193,10 @@ public class MailController {
         mailMessage.setEmailPassword(emails.get(0).getEmailPassword());
         mailMessage.setReceiverEmailAddress(messageDto.getReceiverEmailAddress());
         mailMessage.setSubject(messageDto.getSubject());
-        mailMessage.setText(messageDto.getContent());
+
+        Context context = new Context();
+        context.setVariable("emailContent", messageDto.getContent());
+        mailMessage.setText(templateEngine.process("mail", context));
 
         String suffix = messageDto.getSenderEmailAddress().substring(messageDto.getSenderEmailAddress().indexOf('@'), messageDto.getSenderEmailAddress().length());
         switch (suffix) {
