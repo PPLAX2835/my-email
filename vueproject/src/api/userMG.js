@@ -1,13 +1,13 @@
 import axios from 'axios';
-import { loginreq, req } from './axiosFun';
+import { loginRequest, commonRequest } from './axiosFun';
 
 // 登录接口
-export const login = (params) => { return loginreq("post", "/api/auth/login", params) };
+export const login = (params) => { return loginRequest("post", "/api/auth/login", params) };
 // 退出接口
 // export const logout = ()
-export const loginout = () =>  { return req("delete", "/api/auth/logout", {}).then(res => res.data) };
+export const loginout = () =>  { return commonRequest("delete", "/api/auth/logout", {}).then(res => res.data) };
 // 获取用户菜单
-export const menu = (params) => { return req("get", "/api/menus", {}).then(res => res.data) };
+export const menu = (params) => { return commonRequest("get", "/api/menus", {}).then(res => res.data) };
 
 // 用户管理-获取单个用户
-export const getSelf = () => { return req("get", "/api/user/self", {}).then(res => res.data) };
+export const getSelf = () => { return commonRequest("get", "/api/user/self", {}).then(res => res.data) };

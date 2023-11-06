@@ -59,7 +59,7 @@ public class UserService {
 
         // 先从缓存中查询，如果查询不到就从数据库中查
         String userJsonStr = redisOperator.get(RedisKeyConstants.USER_INFO_PREFIX + username);
-        if (!userJsonStr.isEmpty()) {
+        if (userJsonStr != null) {
             return JSON.parseObject(userJsonStr, User.class);
         } else {
             User user = userMapper.selectByUsernameAndPassword(username, password);

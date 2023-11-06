@@ -124,7 +124,7 @@ public class MailService {
         //邮件主题
         mimeMessageHelper.setSubject(mailMessage.getSubject());
         //邮件内容
-        mimeMessageHelper.setText(mailMessage.getText());
+        mimeMessageHelper.setText(mailMessage.getText(), true);
         //邮件发送时间
         mimeMessageHelper.setSentDate(new Date());
         // 添加附件

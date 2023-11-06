@@ -100,6 +100,9 @@ public class AuthController {
     @DeleteMapping("/logout")
     public String logout(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
+        if (token == null) {
+            return JSON.toJSONString(ResponseResult.success());
+        }
 
         try {
             // 从token中取出user，将缓存中的移除

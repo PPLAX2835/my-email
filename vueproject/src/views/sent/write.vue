@@ -61,6 +61,7 @@
 <script>
 import Pagination from '../../components/Pagination'
 import editor from '../../components/RichTextEditor.vue'
+import { sendEmail } from '../../api/basisMG'
 import Axios from 'axios'
 
 export default {
@@ -172,31 +173,23 @@ export default {
       }
     
 
-      const upladForm = new FormData();
-      upladForm.append('senderEmailAddress', this.editForm.senderEmailAddress);
-      upladForm.append('receiverEmailAddress', this.editForm.receiverEmailAddress);
-      upladForm.append('subject', this.editForm.subject);
-      upladForm.append('content', this.editForm.content);
-      upladForm.append('hasAttachment', this.editForm.hasAttachment);
-      upladForm.append('hasAttachment', this.editForm.hasAttachment);
-      upladForm.append('attachment', this.editForm.attachment);
-      upladForm.append('attachmentFileName', this.editForm.attachmentFileName);
+      const uploadForm = new FormData();
+      uploadForm.append('senderEmailAddress', this.editForm.senderEmailAddress);
+      uploadForm.append('receiverEmailAddress', this.editForm.receiverEmailAddress);
+      uploadForm.append('subject', this.editForm.subject);
+      uploadForm.append('content', this.editForm.content);
+      uploadForm.append('hasAttachment', this.editForm.hasAttachment);
+      uploadForm.append('hasAttachment', this.editForm.hasAttachment);
+      uploadForm.append('attachment', this.editForm.attachment);
+      uploadForm.append('attachmentFileName', this.editForm.attachmentFileName);
   
       let that = this;
 
-      Axios.post(
-          '/api/messages/send',
-          upladForm, 
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'token': localStorage.getItem('logintoken')
-            }
-          }
-      ).then(res => {
-        this.loading = false;
+      sendEmail(uploadForm)
+        .then(res => {
+          this.loading = false;
 
-          if(res.data.code == 200) {
+          if(res.code == 200) {
               that.$message({
               message: '发送成功',
               type: 'success'
@@ -215,11 +208,12 @@ export default {
 
           } else {
             that.$message({
-              message: res.data.data,
+              message: res.data,
               type: 'error'
               })
           }
-      })
+          
+        })
     
 
     }

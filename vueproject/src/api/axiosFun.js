@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // 登录请求方法
-const loginreq = (method, url, params) => {
+const loginRequest = (method, url, params) => {
     return axios({
         method: method,
         url: url,
@@ -25,8 +25,15 @@ const loginreq = (method, url, params) => {
         ]
     }).then(res => res.data);
 };
-// 通用公用方法
-const req = (method, url, params) => {
+
+/**
+ * 公用请求方法
+ * @param {*} method 
+ * @param {*} url 
+ * @param {*} params 
+ * @returns 
+ */
+const commonRequest = (method, url, params) => {
     return axios({
         method: method,
         url: url,
@@ -52,7 +59,11 @@ const req = (method, url, params) => {
     }).then(res => res);
 };
 
+
 export {
-    loginreq,
-    req
+    loginRequest,
+    commonRequest
 }
+
+
+// 356 7058 6119  // 面试
